@@ -1,0 +1,23 @@
+﻿<div class="modal-overlay" @onclick="CloseModal">
+</div>
+
+<div class="modal">
+    <h2>Tytuł Modala</h2>
+
+    <!-- Zawartość konkretnego modala -->
+    <p>Tu zawartość...</p>
+
+    <button class="close-button" @onclick="CloseModal">Zamknij</button>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task CloseModal()
+    {
+        if (OnClose.HasDelegate)
+        {
+            await OnClose.InvokeAsync();
+        }
+    }
+}

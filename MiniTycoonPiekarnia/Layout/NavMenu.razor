@@ -1,29 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">MiniTycoonPiekarnia</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
+﻿<div class="nav-bottom-menu">
+    <button class="nav-button" @onclick="ModalService.OpenProductionModal">Produkcja</button>
+    <button class="nav-button" @onclick="ModalService.OpenWarehouseModal">Magazyn</button>
+    <button class="nav-button" @onclick="ModalService.OpenShopModal">Sklep</button>
+    <button class="nav-button" @onclick="ModalService.OpenUpgradesModal">Ulepszenia</button>
+    <button class="nav-button" @onclick="ModalService.OpenReportsModal">Raporty</button>
 </div>
-
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}

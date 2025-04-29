@@ -1,0 +1,32 @@
+﻿<div class="tile" @onclick="HandleClick">
+    @if (Tile.Building == null)
+    {
+        <span>🪣</span> @* Pusty kafelek (placeholder) *@
+    }
+    else
+    {
+        <span>@GetBuildingIcon(Tile.Building.Value)</span>
+    }
+</div>
+
+@code {
+    [Parameter] public Tile Tile { get; set; } = null!;
+    [Parameter] public EventCallback<Tile> OnTileClicked { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnTileClicked.InvokeAsync(Tile);
+    }
+
+    private string GetBuildingIcon(BuildingType building)
+    {
+        return building switch
+        {
+            BuildingType.Oven => "🔥",          // Piec
+            BuildingType.Shelf => "🧺",         // Półka
+            BuildingType.Decoration => "🎀",    // Dekoracja
+            BuildingType.Display => "🛒",       // Ekspozycja
+            _ => "❓",
+        };
+    }
+}

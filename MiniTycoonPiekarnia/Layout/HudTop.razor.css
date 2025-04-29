@@ -1,0 +1,27 @@
+﻿.hud-container {
+    display: flex;
+    justify-content: center;
+    background-color: #fffcf2;
+    padding: 10px;
+    gap: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hud-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hud-icon {
+    font-size: 24px;
+}
+
+.hud-label {
+    font-weight: bold;
+}
+
+.hud-value {
+    color: #2d6a4f;
+    font-weight: bold;
+}
