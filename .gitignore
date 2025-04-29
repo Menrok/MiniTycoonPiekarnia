@@ -1,0 +1,43 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Logs
+*.log
+
+# User-specific files
+*.bak
+
+# macOS Finder
+.DS_Store
+
+# .NET Core
+project.lock.json
+project.fragment.json
+artifacts/
+
+# Rider
+.idea/
+
+# NPM packages (if using Node.js for frontend)
+node_modules/
+
+# NuGet
+.nuget/
