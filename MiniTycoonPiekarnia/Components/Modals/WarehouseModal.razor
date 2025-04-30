@@ -1,23 +1,51 @@
-﻿<div class="modal-overlay" @onclick="CloseModal">
-</div>
+﻿@implements IDisposable
 
-<div class="modal">
-    <h2>Tytuł Modala</h2>
+<div class="modal-overlay" @onclick="Close"></div>
+<div class="modal" @onclick:stopPropagation>
+    <h2>Magazyn</h2>
 
-    <!-- Zawartość konkretnego modala -->
-    <p>Tu zawartość...</p>
+    <p>Składniki: @GameState.Bakery.CurrentIngredientQuantity / @GameState.Bakery.MaxIngredientCapacity</p>
 
-    <button class="close-button" @onclick="CloseModal">Zamknij</button>
+    @if (GameState.Bakery.Ingredients.Any())
+    {
+        <div class="ingredient-grid">
+            @foreach (var ing in GameState.Bakery.Ingredients)
+            {
+                <div class="ingredient-cell">
+                    <img src="images/ingredients/@ing.IconFile" alt="@ing.Name" class="ingredient-icon" title="@ing.Name" />
+                    <span class="ingredient-quantity">@ing.Quantity</span>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Brak składników.</p>
+    }
+
+    <p>Wypieki: @GameState.Bakery.CurrentProductQuantity / @GameState.Bakery.MaxProductCapacity</p>
+
+    @if (GameState.Bakery.Products.Any(p => p.Quantity > 0))
+    {
+        <div class="product-grid">
+            @foreach (var prod in GameState.Bakery.Products.Where(p => p.Quantity > 0))
+            {
+                <div class="product-cell">
+                    <img src="images/products/@prod.IconFile" alt="@prod.Name" class="product-icon" title="@prod.Name" />
+                    <span class="product-quantity">@prod.Quantity</span>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Brak wypieków.</p>
+    }
 </div>
 
 @code {
-    [Parameter] public EventCallback OnClose { get; set; }
+    private void Close() => ModalService.CloseModal();
 
-    private async Task CloseModal()
-    {
-        if (OnClose.HasDelegate)
-        {
-            await OnClose.InvokeAsync();
-        }
-    }
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
 }

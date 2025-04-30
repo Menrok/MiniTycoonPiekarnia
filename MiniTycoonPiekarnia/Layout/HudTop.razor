@@ -15,3 +15,8 @@
         <span class="hud-value">@GameState.Bakery.CustomerSatisfaction %</span>
     </div>
 </div>
+
+@code {
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
+}

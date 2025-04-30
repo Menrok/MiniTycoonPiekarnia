@@ -1,12 +1,10 @@
 ﻿namespace MiniTycoonPiekarnia.Models;
 
-public class Product
+public class IngredientShop
 {
-    public string Name { get; set; } = string.Empty;
-    public int Quantity { get; set; } = 0;
-    public int QuantitySold { get; set; }
-    public decimal SalePrice { get; set; } = 0m;
-    public Dictionary<string, int> RequiredIngredients { get; set; } = new();
+    public string Name { get; }
+    public decimal Price { get; }
+    public int QuantityToBuy { get; set; }
 
     public string IconFile => $"{Normalize(Name)}.png";
 
@@ -16,4 +14,11 @@ public class Product
              .Replace("ł", "l").Replace("ń", "n").Replace("ó", "o")
              .Replace("ś", "s").Replace("ź", "z").Replace("ż", "z")
              .Replace(" ", "");
+
+    public IngredientShop(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+        QuantityToBuy = 0;
+    }
 }

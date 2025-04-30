@@ -1,7 +1,7 @@
 ﻿<div class="tile" @onclick="HandleClick">
     @if (Tile.Building == null)
     {
-        <span>🪣</span> @* Pusty kafelek (placeholder) *@
+        <span>⚪</span>
     }
     else
     {
@@ -22,10 +22,10 @@
     {
         return building switch
         {
-            BuildingType.Oven => "🔥",          // Piec
-            BuildingType.Shelf => "🧺",         // Półka
-            BuildingType.Decoration => "🎀",    // Dekoracja
-            BuildingType.Display => "🛒",       // Ekspozycja
+            BuildingType.Oven => "🔥",        // Piec
+            BuildingType.Shelf => "🧺",       // Półka
+            BuildingType.Decoration => "🎀",  // Dekoracja
+            BuildingType.Display => "🛒",     // Ekspozycja
             _ => "❓",
         };
     }

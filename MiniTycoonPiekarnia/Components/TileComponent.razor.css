@@ -1,0 +1,17 @@
+﻿.tile {
+    width: 100px;
+    height: 100px;
+    background-color: #fef6e4;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 40px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+    .tile:hover {
+        background-color: #ffd7ba;
+        transform: scale(1.05);
+    }

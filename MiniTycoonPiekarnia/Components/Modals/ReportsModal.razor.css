@@ -18,7 +18,8 @@
     border-radius: 12px;
     padding: 20px;
     z-index: 1001;
-    width: 300px;
+    width: 600px;
+    height: 500px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     display: flex;
@@ -41,4 +42,14 @@
 
     .close-button:hover {
         background-color: #ff2e2e;
+    }
+
+.report-list {
+    list-style: none;
+    padding: 0;
+}
+
+    .report-list li {
+        margin: 8px 0;
+        font-size: 1rem;
     }

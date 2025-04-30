@@ -1,19 +1,20 @@
 ﻿@page "/"
 
 <div class="bakery-map">
-    @foreach (var y in Enumerable.Range(0, GameState.Bakery.MapSize))
-    {
-        <div class="row">
-            @foreach (var x in Enumerable.Range(0, GameState.Bakery.MapSize))
+@foreach (var y in Enumerable.Range(0, GameState.Bakery.MapSize))
+{
+    <div class="row">
+        @foreach (var x in Enumerable.Range(0, GameState.Bakery.MapSize))
+        {
+            var tile = GameState.Bakery.Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
+            if (tile != null)
             {
-                var tile = GameState.Bakery.Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
-                if (tile != null)
-                {
-                    <TileComponent Tile="tile" OnTileClicked="HandleTileClick" />
-                }
+                <TileComponent Tile="tile" OnTileClicked="HandleTileClick" />
             }
-        </div>
-    }
+        }
+    </div>
+}
+
 </div>
 
 @if (ModalService.IsBuildModalOpen)
@@ -46,10 +47,16 @@
     <ReportsModal />
 }
 
+@if (ModalService.IsCustomerModalOpen)
+{
+    <CustomerModal />
+}
+
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ModalService.OnChange += StateHasChanged;
+        await GameState.LoadGameAsync();
     }
 
     private void HandleTileClick(Tile tile)

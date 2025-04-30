@@ -10,6 +10,7 @@ public class ModalService
     public bool IsUpgradesModalOpen { get; private set; }
     public bool IsReportsModalOpen { get; private set; }
     public bool IsBuildModalOpen { get; private set; }
+    public bool IsCustomerModalOpen { get; private set; }
     public Tile? SelectedTileForBuild { get; private set; }
 
     public event Action? OnChange;
@@ -24,6 +25,7 @@ public class ModalService
         IsUpgradesModalOpen = false;
         IsReportsModalOpen = false;
         IsBuildModalOpen = false;
+        IsCustomerModalOpen = false;
         SelectedTileForBuild = null;
     }
 
@@ -62,6 +64,12 @@ public class ModalService
         NotifyStateChanged();
     }
 
+    public void OpenCustomerModal()
+    {
+        CloseAllModals();
+        IsCustomerModalOpen = true;
+        NotifyStateChanged();
+    }
     public void OpenBuildModal(Tile tile)
     {
         CloseAllModals();

@@ -1,23 +1,68 @@
-﻿<div class="modal-overlay" @onclick="CloseModal">
-</div>
+﻿@implements IDisposable
 
-<div class="modal">
-    <h2>Tytuł Modala</h2>
+<div class="modal-overlay" @onclick="Close"></div>
 
-    <!-- Zawartość konkretnego modala -->
-    <p>Tu zawartość...</p>
+<div class="modal" @onclick:stopPropagation>
+    <h2>Buduj na polu (@Tile.X, @Tile.Y)</h2>
 
-    <button class="close-button" @onclick="CloseModal">Zamknij</button>
+    <select @bind="selectedBuilding">
+        <option value="">-- Wybierz budynek --</option>
+        <option value="Oven">🔥 Piec (200 zł)</option>
+        <option value="Shelf">🧺 Półka (100 zł)</option>
+    </select>
+
+    <button @onclick="Build" disabled="@(!CanBuild)">Buduj</button>
+    <button class="close-button" @onclick="Close">Zamknij</button>
+
+    @if (errorMessage != null)
+    {
+        <p style="color:red">@errorMessage</p>
+    }
 </div>
 
 @code {
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
+
+    [Parameter] public Tile Tile { get; set; } = null!;
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private async Task CloseModal()
+    private BuildingType? selectedBuilding;
+    private string? errorMessage;
+
+    private void Close() => ModalService.CloseModal();
+
+    private async Task Build()
     {
-        if (OnClose.HasDelegate)
+        if (selectedBuilding == null)
         {
-            await OnClose.InvokeAsync();
+            errorMessage = "Wybierz budynek.";
+            return;
         }
+
+        var cost = GetBuildingCost(selectedBuilding.Value);
+        var success = GameState.BuildBuilding(Tile.X, Tile.Y, selectedBuilding.Value, cost);
+
+        if (!success)
+        {
+            errorMessage = "Za mało pieniędzy lub budynek już istnieje.";
+            return;
+        }
+
+        await GameState.SaveGameAsync();
+        ModalService.CloseModal();
+    }
+
+
+    private bool CanBuild => selectedBuilding != null;
+
+    private decimal GetBuildingCost(BuildingType building)
+    {
+        return building switch
+        {
+            BuildingType.Oven => 200m,
+            BuildingType.Shelf => 100m,
+            _ => 0m
+        };
     }
 }

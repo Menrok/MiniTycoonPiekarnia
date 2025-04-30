@@ -1,23 +1,39 @@
-﻿<div class="modal-overlay" @onclick="CloseModal">
-</div>
+﻿@implements IDisposable
 
-<div class="modal">
-    <h2>Tytuł Modala</h2>
+<div class="modal-overlay" @onclick="Close"></div>
 
-    <!-- Zawartość konkretnego modala -->
-    <p>Tu zawartość...</p>
+<div class="modal" @onclick:stopPropagation>
+    <h2>📊 Raporty piekarni</h2>
 
-    <button class="close-button" @onclick="CloseModal">Zamknij</button>
+    <ul class="report-list">
+        <li><strong>Sprzedane wypieki:</strong> @TotalProductsSold</li>
+        <li><strong>Obsłużeni klienci:</strong> @GameState.Bakery.CustomersHistory.Count</li>
+        <li><strong>Zadowolenie klientów:</strong> @GameState.Bakery.CustomerSatisfaction %</li>
+        <li><strong>Stan konta:</strong> @GameState.Bakery.Money.ToString("0.00") zł</li>
+    </ul>
+
+    <h4>Najczęściej sprzedawane produkty:</h4>
+    <ul>
+        @foreach (var item in TopProducts)
+        {
+            <li>@item.Name: @item.QuantitySold sprzedanych</li>
+        }
+    </ul>
+
+    <button class="close-button" @onclick="Close">Zamknij</button>
 </div>
 
 @code {
-    [Parameter] public EventCallback OnClose { get; set; }
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
 
-    private async Task CloseModal()
-    {
-        if (OnClose.HasDelegate)
-        {
-            await OnClose.InvokeAsync();
-        }
-    }
+    private void Close() => ModalService.CloseModal();
+
+    private int TotalProductsSold => GameState.Bakery.Products.Sum(p => p.QuantitySold);
+
+    private List<Product> TopProducts => GameState.Bakery.Products
+        .Where(p => p.QuantitySold > 0)
+        .OrderByDescending(p => p.QuantitySold)
+        .Take(5)
+        .ToList();
 }
