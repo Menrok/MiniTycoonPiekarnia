@@ -18,7 +18,7 @@
     border-radius: 12px;
     padding: 20px;
     z-index: 1001;
-    width: 300px;
+    width: 500px;
     height: 300px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -42,4 +42,46 @@
 
     .close-button:hover {
         background-color: #ff2e2e;
+    }
+
+.building-options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.building-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    width: 120px;
+    background-color: #fff3cd;
+}
+
+    .building-card:hover {
+        transform: scale(1.05);
+        border-color: #ffb703;
+    }
+
+    .building-card img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        margin-bottom: 6px;
+    }
+
+    .building-card .label {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .building-card .price {
+        color: #2d6a4f;
+        font-weight: bold;
     }

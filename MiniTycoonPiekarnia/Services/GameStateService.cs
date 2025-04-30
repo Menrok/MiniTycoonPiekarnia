@@ -46,7 +46,7 @@ public class GameStateService
 
     private void InitializeBakery()
     {
-        Bakery.MapSize = 5;
+        Bakery.MapSize = 3;
 
         for (int y = 0; y < Bakery.MapSize; y++)
         {
@@ -182,7 +182,7 @@ public class GameStateService
         NotifyStateChanged();
     }
 
-    public bool BuildBuilding(int x, int y, BuildingType type, decimal cost)
+    public bool BuildBuilding(int x, int y, BuildingType type, decimal cost, int rotation)
     {
         if (!SpendMoney(cost)) return false;
 
@@ -190,6 +190,8 @@ public class GameStateService
         if (tile == null || tile.Building != null) return false;
 
         tile.Building = type;
+        tile.Rotation = rotation;
+
         NotifyStateChanged();
         return true;
     }

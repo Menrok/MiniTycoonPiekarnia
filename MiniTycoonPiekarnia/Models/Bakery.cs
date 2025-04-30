@@ -8,7 +8,7 @@ public class Bakery
     public int BakeryLevel { get; set; } = 1;
     public int CustomerSatisfaction { get; set; } = 100;
     public List<Tile> Tiles { get; set; } = new();
-    public int MapSize { get; set; } = 5;
+    public int MapSize { get; set; } = 3;
     public List<Customer> CustomersWaiting { get; set; } = new();
     public List<Customer> CustomersHistory { get; set; } = new();
 

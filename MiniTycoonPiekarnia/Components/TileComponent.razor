@@ -1,11 +1,8 @@
 ﻿<div class="tile" @onclick="HandleClick">
-    @if (Tile.Building == null)
+    @if (Tile.Building != null)
     {
-        <span>⚪</span>
-    }
-    else
-    {
-        <span>@GetBuildingIcon(Tile.Building.Value)</span>
+        <img src="@GetBuildingImage(Tile.Building.Value)"
+             style="transform: rotate(@($"{Tile.Rotation}deg")); width: 80px; height: 80px;" />
     }
 </div>
 
@@ -18,15 +15,11 @@
         await OnTileClicked.InvokeAsync(Tile);
     }
 
-    private string GetBuildingIcon(BuildingType building)
-    {
-        return building switch
+    private string GetBuildingImage(BuildingType building) =>
+        building switch
         {
-            BuildingType.Oven => "🔥",        // Piec
-            BuildingType.Shelf => "🧺",       // Półka
-            BuildingType.Decoration => "🎀",  // Dekoracja
-            BuildingType.Display => "🛒",     // Ekspozycja
-            _ => "❓",
+            BuildingType.Oven => "images/building/piec.png",
+            BuildingType.Shelf => "images/building/polka.png",
+            _ => "images/building/unknown.png"
         };
-    }
 }

@@ -1,20 +1,21 @@
 ﻿<div class="hud-container">
     <div class="hud-item">
-        <span class="hud-icon">💵</span>
+        <img src="images/hub/pieniadze.png" alt="Pieniądze" class="hud-icon-img" />
         <span class="hud-label">Pieniądze:</span>
         <span class="hud-value">@GameState.Bakery.Money.ToString("0.00") zł</span>
     </div>
     <div class="hud-item">
-        <span class="hud-icon">🏠</span>
+        <img src="images/hub/poziom.png" alt="Poziom" class="hud-icon-img" />
         <span class="hud-label">Poziom:</span>
         <span class="hud-value">@GameState.Bakery.BakeryLevel</span>
     </div>
     <div class="hud-item">
-        <span class="hud-icon">😋</span>
+        <img src="images/hub/zadowolenie.png" alt="Zadowolenie" class="hud-icon-img" />
         <span class="hud-label">Zadowolenie:</span>
         <span class="hud-value">@GameState.Bakery.CustomerSatisfaction %</span>
     </div>
 </div>
+
 
 @code {
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;

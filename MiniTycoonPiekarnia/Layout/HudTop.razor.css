@@ -1,27 +1,40 @@
 ﻿.hud-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 50px;
+    background-color: #fffcf2;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     display: flex;
     justify-content: center;
-    background-color: #fffcf2;
-    padding: 10px;
+    align-items: center;
     gap: 40px;
+    z-index: 1000;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .hud-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
 }
 
-.hud-icon {
-    font-size: 24px;
+.hud-icon-img {
+    width: 48px;
+    height: 48px;
 }
 
 .hud-label {
     font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .hud-value {
     color: #2d6a4f;
     font-weight: bold;
+    font-size: 0.95rem;
 }

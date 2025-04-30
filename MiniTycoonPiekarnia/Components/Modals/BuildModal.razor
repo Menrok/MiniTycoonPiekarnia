@@ -5,14 +5,22 @@
 <div class="modal" @onclick:stopPropagation>
     <h2>Buduj na polu (@Tile.X, @Tile.Y)</h2>
 
-    <select @bind="selectedBuilding">
-        <option value="">-- Wybierz budynek --</option>
-        <option value="Oven">🔥 Piec (200 zł)</option>
-        <option value="Shelf">🧺 Półka (100 zł)</option>
-    </select>
-
-    <button @onclick="Build" disabled="@(!CanBuild)">Buduj</button>
-    <button class="close-button" @onclick="Close">Zamknij</button>
+    <div class="building-options">
+        <div class="building-card" @onclick="() => TryBuild(BuildingType.Oven)">
+            <img src="images/building/piec.png" alt="Piec" />
+            <div class="label">Piec</div>
+            <div class="price">200 zł</div>
+        </div>
+        <div class="building-card" @onclick="() => TryBuild(BuildingType.Shelf)">
+            <img src="images/building/polka.png" alt="Półka" />
+            <div class="label">Półka</div>
+            <div class="price">100 zł</div>
+        </div>
+    </div>
+    <div class="rotation-controls">
+        <button @onclick="RotateLeft">⟲ Obróć</button>
+        <span>@rotation°</span>
+    </div>
 
     @if (errorMessage != null)
     {
@@ -21,27 +29,21 @@
 </div>
 
 @code {
-    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
-    public void Dispose() => GameState.OnChange -= StateHasChanged;
-
     [Parameter] public Tile Tile { get; set; } = null!;
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private BuildingType? selectedBuilding;
     private string? errorMessage;
+    private int rotation = 0;
+
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
 
-    private async Task Build()
+    private async Task TryBuild(BuildingType type)
     {
-        if (selectedBuilding == null)
-        {
-            errorMessage = "Wybierz budynek.";
-            return;
-        }
-
-        var cost = GetBuildingCost(selectedBuilding.Value);
-        var success = GameState.BuildBuilding(Tile.X, Tile.Y, selectedBuilding.Value, cost);
+        var cost = GetBuildingCost(type);
+        var success = GameState.BuildBuilding(Tile.X, Tile.Y, type, cost, rotation);
 
         if (!success)
         {
@@ -53,16 +55,15 @@
         ModalService.CloseModal();
     }
 
-
-    private bool CanBuild => selectedBuilding != null;
-
-    private decimal GetBuildingCost(BuildingType building)
+    private decimal GetBuildingCost(BuildingType building) => building switch
     {
-        return building switch
-        {
-            BuildingType.Oven => 200m,
-            BuildingType.Shelf => 100m,
-            _ => 0m
-        };
+        BuildingType.Oven => 200m,
+        BuildingType.Shelf => 100m,
+        _ => 0m
+    };
+
+    private void RotateLeft()
+    {
+        rotation = (rotation + 90) % 360;
     }
 }
