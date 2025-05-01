@@ -16,6 +16,11 @@
             <div class="label">Półka</div>
             <div class="price">100 zł</div>
         </div>
+        <div class="building-card" @onclick="() => TryBuild(BuildingType.Website)">
+            <img src="images/building/witryna.png" alt="Witryna chłodnicza" />
+            <div class="label">Witryna chłodnicza</div>
+            <div class="price">150 zł</div>
+        </div>
     </div>
     <div class="rotation-controls">
         <button @onclick="RotateLeft">⟲ Obróć</button>
@@ -59,6 +64,7 @@
     {
         BuildingType.Oven => 200m,
         BuildingType.Shelf => 100m,
+        BuildingType.Website => 150m,
         _ => 0m
     };
 
