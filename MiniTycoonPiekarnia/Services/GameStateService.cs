@@ -10,8 +10,7 @@ public class GameStateService
     private readonly ILocalStorageService _localStorage;
     private const string SaveKey = "BakeryGameSave";
 
-    private readonly List<ProductionTask> _activeProductions = new();
-    public IReadOnlyList<ProductionTask> ActiveProductions => _activeProductions;
+    public IReadOnlyList<ProductionTask> ActiveProductions => Bakery.ActiveProductions;
 
     private System.Timers.Timer? _productionTimer;
     private System.Timers.Timer? _customerTimer;
@@ -42,6 +41,9 @@ public class GameStateService
         NotifyStateChanged();
 
         StartCustomerTimer();
+
+        if (Bakery.ActiveProductions.Any())
+            StartProductionLoop();
     }
 
     private void InitializeBakery()
@@ -114,7 +116,6 @@ public class GameStateService
         {
             RequestedProducts = requested,
             TimeCreated = DateTime.Now,
-            MaxWaitTime = TimeSpan.FromSeconds(60)
         });
 
         await SaveGameAsync();
@@ -242,7 +243,7 @@ public class GameStateService
             IsRunning = false
         };
 
-        _activeProductions.Add(task);
+        Bakery.ActiveProductions.Add(task);
         StartProductionLoop();
         NotifyStateChanged();
     }
@@ -261,16 +262,16 @@ public class GameStateService
     private async Task HandleProductionTick()
     {
         var ovens = Bakery.Tiles.Count(t => t.Building == BuildingType.Oven);
-        if (ovens == 0 || !_activeProductions.Any())
+        if (ovens == 0 || !Bakery.ActiveProductions.Any())
             return;
 
         var now = DateTime.Now;
-        var runningTasks = _activeProductions.Where(t => t.IsRunning).ToList();
+        var runningTasks = Bakery.ActiveProductions.Where(t => t.IsRunning).ToList();
 
         int availableOvens = ovens - runningTasks.Count;
         if (availableOvens > 0)
         {
-            var waitingTasks = _activeProductions.Where(t => !t.IsRunning).Take(availableOvens);
+            var waitingTasks = Bakery.ActiveProductions.Where(t => !t.IsRunning).Take(availableOvens);
             foreach (var task in waitingTasks)
             {
                 task.IsRunning = true;
@@ -311,20 +312,45 @@ public class GameStateService
         }
 
         foreach (var done in completedTasks)
-            _activeProductions.Remove(done);
-
-        foreach (var done in completedTasks)
+        {
             done.IsRunning = false;
+            Bakery.ActiveProductions.Remove(done);
+        }
 
         await SaveGameAsync();
         NotifyStateChanged();
 
-        if (!_activeProductions.Any())
+        if (!Bakery.ActiveProductions.Any())
         {
             _productionTimer?.Stop();
             _productionTimer?.Dispose();
             _productionTimer = null;
         }
+    }
+    public async void ExpandBakeryRight(int cost)
+    {
+        if (!SpendMoney(cost) || Bakery.MapSize >= 10) return;
+
+        int newX = Bakery.MapSize;
+        for (int y = 0; y < Bakery.MapSize; y++)
+            Bakery.Tiles.Add(new Tile { X = newX, Y = y });
+
+        Bakery.MapSize++;
+        NotifyStateChanged();
+        await SaveGameAsync();
+    }
+
+    public async void ExpandBakeryDown(int cost)
+    {
+        if (!SpendMoney(cost) || Bakery.MapSize >= 10) return;
+
+        int newY = Bakery.MapSize;
+        for (int x = 0; x < Bakery.MapSize; x++)
+            Bakery.Tiles.Add(new Tile { X = x, Y = newY });
+
+        Bakery.MapSize++;
+        NotifyStateChanged();
+        await SaveGameAsync();
     }
 
 }

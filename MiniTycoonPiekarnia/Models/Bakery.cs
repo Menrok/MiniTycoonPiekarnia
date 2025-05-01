@@ -11,6 +11,7 @@ public class Bakery
     public int MapSize { get; set; } = 3;
     public List<Customer> CustomersWaiting { get; set; } = new();
     public List<Customer> CustomersHistory { get; set; } = new();
+    public List<ProductionTask> ActiveProductions { get; set; } = new();
 
 
     public int MaxProductCapacity => 50 * Tiles.Count(t => t.Building == BuildingType.Shelf);

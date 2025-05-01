@@ -5,7 +5,6 @@
     <h2>Produkcja wypieków</h2>
 
     <div class="production-layout">
-        <!-- Lewa kolumna: Produkty do produkcji -->
         <div class="production-left">
             @foreach (var product in GameState.Bakery.Products)
             {
@@ -22,9 +21,7 @@
             }
         </div>
 
-        <!-- Prawa kolumna: Kolejka produkcji -->
         <div class="production-right">
-            <h4>Aktualna kolejka produkcji</h4>
             @if (GameState.ActiveProductions.Any())
             {
                 <ul class="production-queue">
@@ -43,15 +40,14 @@
                         var completedItems = task.TotalQuantity - task.QuantityRemaining;
                         var percent = (int)(((completedItems + currentProgress) / task.TotalQuantity) * 100);
                         var secondsLeft = (int)((task.QuantityRemaining - 1 + (1.0 - currentProgress)) * timePerItem.TotalSeconds);
+                        var product = GameState.Bakery.Products.FirstOrDefault(p => p.Name == task.ProductName);
 
                         var taskClass = task.IsRunning ? "production-running" : "production-waiting";
                         var fillWidth = $"{percent}%";
 
                         <li class="@taskClass">
                             <div class="production-row">
-                                <img src="@($"images/products/{task.ProductName.ToLower().Replace(" ", "")}.png")"
-                                     alt="@task.ProductName"
-                                     class="production-icon" />
+                                <img src="images/products/@product?.IconFile" alt="@task.ProductName" class="production-icon" />
 
                                 <div class="progress-bar">
                                     <div class="progress-fill" style="width:@fillWidth"></div>

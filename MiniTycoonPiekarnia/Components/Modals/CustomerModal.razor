@@ -2,31 +2,34 @@
 
 <div class="modal-overlay" @onclick="Close"></div>
 <div class="modal" @onclick:stopPropagation>
-    <h2>Klienci oczekujący</h2>
-    <p>🧍 Nowy klient za: @SecondsUntilNextCustomer s</p>
+    <p>Nowy klient za: @SecondsUntilNextCustomer s</p>
 
     @if (GameState.Bakery.CustomersWaiting.Any())
     {
-        @foreach (var customer in GameState.Bakery.CustomersWaiting)
-        {
-            var totalValue = customer.RequestedProducts.Sum(req =>
-            GameState.Bakery.Products.First(p => p.Name == req.Key).SalePrice * req.Value);
+        <div class="customer-grid">
+            @foreach (var customer in GameState.Bakery.CustomersWaiting)
+            {
+                var totalValue = customer.RequestedProducts.Sum(req =>
+                GameState.Bakery.Products.First(p => p.Name == req.Key).SalePrice * req.Value);
+                var timeLeft = customer.MaxWaitTime - (DateTime.Now - customer.TimeCreated);
 
-            var timeLeft = customer.MaxWaitTime - (DateTime.Now - customer.TimeCreated);
-            <div class="customer-box">
-                <p><strong>Zamówienie:</strong></p>
-                <ul>
-                    @foreach (var item in customer.RequestedProducts)
-                    {
-                        <li>@item.Key: @item.Value</li>
-                    }
-                </ul>
-                <p>💰 Zysk: @totalValue.ToString("0.00") zł</p>
-                <p>⌛ Pozostały czas: @timeLeft.Seconds s</p>
-                <button @onclick="() => Fulfill(customer)">Sprzedaj</button>
-            </div>
-        }
+                <div class="customer-box" @onclick="() => Fulfill(customer)">
+                    <div class="customer-header">
+                        <span><strong>Zamówienie</strong></span>
+                        <span class="customer-timer">@timeLeft.Minutes:@timeLeft.Seconds</span>
+                    </div>
 
+                    <div class="customer-items">
+                        @foreach (var item in customer.RequestedProducts)
+                        {
+                            <div>@item.Key x @item.Value</div>
+                        }
+                    </div>
+
+                    <div class="customer-profit">@totalValue.ToString("0.00") zł</div>
+                </div>
+            }
+        </div>
     }
     else
     {

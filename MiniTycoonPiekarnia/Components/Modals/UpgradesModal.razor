@@ -1,18 +1,61 @@
 ﻿@implements IDisposable
 
-<div class="modal-overlay" @onclick="Close">
-</div>
+<div class="modal-overlay" @onclick="Close"></div>
 
-<div class="modal">
-    <h2>Tytuł Modala</h2>
+<div class="modal bakery-expand-modal">
+    <h2>Powiększ piekarnię</h2>
 
-    <!-- Zawartość konkretnego modala -->
-    <p>Tu zawartość...</p>
+    @if (CanExpandRight)
+    {
+        <button @onclick="ExpandRight">Rozszerz w prawo (do @(CurrentSize + 1)x@CurrentSize)</button>
+    }
+    else
+    {
+        <button disabled>Rozszerz w prawo</button>
+    }
 
-    <button class="close-button" @onclick="Close">Zamknij</button>
+    @if (CanExpandDown)
+    {
+        <button @onclick="ExpandDown">Rozszerz w dół (do @CurrentSize x @(CurrentSize + 1))</button>
+    }
+    else
+    {
+        <button disabled>Rozszerz w dół</button>
+    }
+
+    <p>Koszt: @CurrentCost zł</p>
 </div>
 
 @code {
+    private int CurrentSize => GameState.Bakery.MapSize;
+    private int MaxSize => 10;
+
+    private int ExpansionLevel => CurrentSize - 3;
+    private int CurrentCost => (int)(500 * Math.Pow(2, ExpansionLevel));
+    private bool CanAfford => GameState.CanAfford(CurrentCost);
+
+    private string ExpandDirection = "right";
+
+    private int NewWidth => ExpandDirection == "right" && CanExpandRight ? CurrentSize + 1 : CurrentSize;
+    private int NewHeight => ExpandDirection == "down" && CanExpandDown ? CurrentSize + 1 : CurrentSize;
+
+    private bool CanExpandRight => CurrentSize < MaxSize && CanAfford;
+    private bool CanExpandDown => CurrentSize < MaxSize && CanAfford;
+
+    private void ExpandRight()
+    {
+        if (!CanExpandRight) return;
+        GameState.ExpandBakeryRight(CurrentCost);
+        Close();
+    }
+
+    private void ExpandDown()
+    {
+        if (!CanExpandDown) return;
+        GameState.ExpandBakeryDown(CurrentCost);
+        Close();
+    }
+
     private void Close() => ModalService.CloseModal();
 
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
