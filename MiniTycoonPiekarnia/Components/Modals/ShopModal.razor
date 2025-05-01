@@ -2,13 +2,13 @@
 
 <div class="modal-overlay" @onclick="Close"></div>
 <div class="modal" @onclick:stopPropagation>
-    <h2>Sklep – Kup składniki</h2>
+    <h2>Sklep ze składnikami</h2>
 
     <div class="storage-bar-wrapper">
         <div class="storage-bar">
-            <div class="storage-fill" style="width:@($"{100 * GameState.Bakery.CurrentIngredientQuantity / GameState.Bakery.MaxIngredientCapacity}%")">
+            <div class="storage-fill" style="width:@percentage%">
                 <span class="storage-label">
-                    Magazyn: @GameState.Bakery.CurrentIngredientQuantity / @GameState.Bakery.MaxIngredientCapacity
+                    Magazyn: @currentQty / @maxCapacity
                 </span>
             </div>
         </div>
@@ -25,28 +25,41 @@
                     <div class="ingredient-qty">@currentQty</div>
                 </div>
                 <div class="buy-buttons">
-                    <button @onclick="() => Buy(item, 1)">Kup 1</button>
-                    <button @onclick="() => Buy(item, 5)">Kup 5</button>
-                    <button @onclick="() => Buy(item, 10)">Kup 10</button>
+                    <button @onclick="() => Buy(item, 1)">Kup 1 (@(item.Price * 1) zł)</button>
+                    <button @onclick="() => Buy(item, 5)">Kup 5 (@(item.Price * 5) zł)</button>
+                    <button @onclick="() => Buy(item, 10)">Kup 10 (@(item.Price * 10) zł)</button>
                 </div>
             </div>
         }
     </div>
 
-    @if (errorMessage != null)
+    @if (showPopupError)
     {
-        <p style="color:red">@errorMessage</p>
+        <div class="error-popup @(fadeOut ? "fade-out" : "")">
+            @errorMessage
+        </div>
     }
 </div>
 
 @code {
     private string? errorMessage;
-
     private List<IngredientShop> ShopItems = IngredientList.GetInitialIngredients()
         .Select(i => new IngredientShop(i.Name, i.PurchasePrice))
         .ToList();
 
-    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    private int currentQty;
+    private int maxCapacity;
+    private int percentage;
+
+    private bool showPopupError = false;
+    private bool fadeOut = false;
+
+    protected override void OnInitialized()
+    {
+        GameState.OnChange += StateHasChanged;
+        UpdateStorageStats();
+    }
+
     public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
@@ -58,17 +71,41 @@
         var total = quantity * item.Price;
         if (!GameState.CanAfford(total))
         {
-            errorMessage = "Za mało pieniędzy!";
+            await ShowError("Za mało pieniędzy!");
             return;
         }
 
         if (GameState.Bakery.CurrentIngredientQuantity + quantity > GameState.Bakery.MaxIngredientCapacity)
         {
-            errorMessage = "Brak miejsca w magazynie!";
+            await ShowError("Brak miejsca w magazynie!");
             return;
         }
 
         GameState.BuyIngredient(item.Name, item.Price, quantity);
         await GameState.SaveGameAsync();
+        UpdateStorageStats();
+    }
+
+    private void UpdateStorageStats()
+    {
+        maxCapacity = GameState.Bakery.MaxIngredientCapacity;
+        currentQty = GameState.Bakery.CurrentIngredientQuantity;
+        percentage = maxCapacity > 0 ? (int)(100 * currentQty / maxCapacity) : 0;
+    }
+
+    private async Task ShowError(string message)
+    {
+        errorMessage = message;
+        showPopupError = true;
+        fadeOut = false;
+        StateHasChanged();
+
+        await Task.Delay(700);
+        fadeOut = true;
+        StateHasChanged();
+
+        await Task.Delay(500);
+        showPopupError = false;
+        StateHasChanged();
     }
 }

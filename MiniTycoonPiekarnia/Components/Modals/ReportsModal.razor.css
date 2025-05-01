@@ -29,21 +29,6 @@
     font-size: 0.95rem;
 }
 
-.close-button {
-    background-color: #ff595e;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-    .close-button:hover {
-        background-color: #ff2e2e;
-    }
-
 .report-list {
     list-style: none;
     padding: 0;

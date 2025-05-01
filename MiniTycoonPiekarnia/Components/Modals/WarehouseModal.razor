@@ -4,12 +4,14 @@
 <div class="modal" @onclick:stopPropagation>
     <h2>Magazyn</h2>
 
-    <p>Składniki: @GameState.Bakery.CurrentIngredientQuantity / @GameState.Bakery.MaxIngredientCapacity</p>
+    <div class="storage-info">
+        Składniki: @GameState.Bakery.CurrentIngredientQuantity / @GameState.Bakery.MaxIngredientCapacity
+    </div>
 
-    @if (GameState.Bakery.Ingredients.Any())
+    @if (GameState.Bakery.Ingredients.Any(p => p.Quantity > 0))
     {
         <div class="ingredient-grid">
-            @foreach (var ing in GameState.Bakery.Ingredients)
+            @foreach (var ing in GameState.Bakery.Ingredients.Where(p => p.Quantity > 0))
             {
                 <div class="ingredient-cell">
                     <img src="images/ingredients/@ing.IconFile" alt="@ing.Name" class="ingredient-icon" title="@ing.Name" />
@@ -23,7 +25,9 @@
         <p>Brak składników.</p>
     }
 
-    <p>Wypieki: @GameState.Bakery.CurrentProductQuantity / @GameState.Bakery.MaxProductCapacity</p>
+    <div class="storage-info">
+        Wypieki: @GameState.Bakery.CurrentProductQuantity / @GameState.Bakery.MaxProductCapacity
+    </div>
 
     @if (GameState.Bakery.Products.Any(p => p.Quantity > 0))
     {

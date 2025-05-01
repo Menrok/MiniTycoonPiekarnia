@@ -4,7 +4,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: 900;
 }
 
@@ -19,80 +19,91 @@
     padding: 20px;
     z-index: 1001;
     width: 600px;
-    height: 400px;
+    height: 320px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 12px;
     font-size: 0.95rem;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
-.close-button {
-    background-color: #ff595e;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-    .close-button:hover {
-        background-color: #ff2e2e;
-    }
-
-select, input[type="number"] {
+select,
+input[type="number"] {
     padding: 6px;
     font-size: 1rem;
     margin: 4px 0;
 }
 
-.product-selection {
+.production-layout {
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    flex: 1;
 }
 
-.product-card {
-    width: 120px;
-    cursor: pointer;
+.production-left {
+    width: 45%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 8px;
-    transition: transform 0.2s;
+    gap: 10px;
+    overflow-y: hidden;
 }
 
-    .product-card:hover {
-        transform: scale(1.05);
-        background-color: #f8f8f8;
+.production-right {
+    width: 55%;
+    overflow-y: auto;
+    max-height: 100%;
+    padding-right: 8px;
+}
+
+.production-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+    .product-button:hover {
+        background-color: #f0f0f0;
     }
 
 .product-icon {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     border-radius: 8px;
-    border: 2px solid #ccc;
+    border: 1px solid #ccc;
 }
 
-.product-ingredients {
+.production-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.ingredient-list {
     font-size: 0.8rem;
-    margin-top: 6px;
+    text-align: left;
 }
 
 .production-queue {
     list-style: none;
     padding: 0;
     width: 100%;
-    max-width: 500px;
-    margin-top: 10px;
+    margin: 0;
 }
 
     .production-queue li {
@@ -101,12 +112,12 @@ select, input[type="number"] {
     }
 
 .progress-bar {
+    position: relative;
     width: 100%;
     height: 16px;
     background: #eee;
     border-radius: 5px;
     overflow: hidden;
-    margin-top: 4px;
 }
 
 .progress-fill {
@@ -120,4 +131,43 @@ select, input[type="number"] {
     color: #555;
     margin-top: 4px;
     text-align: right;
+}
+
+.error-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    z-index: 2000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+    .error-popup.fade-out {
+        opacity: 0;
+    }
+
+.progress-fill {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    color: #333;
+    font-weight: bold;
+    pointer-events: none;
 }

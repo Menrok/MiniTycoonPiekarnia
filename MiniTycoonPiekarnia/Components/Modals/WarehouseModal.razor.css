@@ -19,7 +19,7 @@
     padding: 20px;
     z-index: 1001;
     width: 600px;
-    height: 360px;
+    height: 320px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     display: flex;
@@ -28,21 +28,6 @@
     gap: 12px;
     font-size: 0.95rem;
 }
-
-.close-button {
-    background-color: #ff595e;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin-top: 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-    .close-button:hover {
-        background-color: #ff2e2e;
-    }
 
 .modal ul {
     list-style: none;
@@ -129,4 +114,9 @@
     border-radius: 6px;
     font-size: 0.8rem;
     font-weight: bold;
+}
+
+.storage-info {
+    font-weight: bold;
+    color: #444;
 }

@@ -4,67 +4,79 @@
 <div class="modal" @onclick:stopPropagation>
     <h2>Produkcja wypieków</h2>
 
-    <div class="product-selection">
-        @foreach (var product in GameState.Bakery.Products)
-        {
-            <div class="product-card" @onclick="() => TryStartProduction(product)">
-                <img src="images/products/@product.IconFile" alt="@product.Name" title="@product.Name" class="product-icon" />
-                <div class="product-ingredients">
-                    @foreach (var req in product.RequiredIngredients)
-                    {
-                        var owned = GameState.Bakery.Ingredients.FirstOrDefault(i => i.Name == req.Key)?.Quantity ?? 0;
-                        <div>@req.Key: @owned / @req.Value</div>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <p style="color:red">@errorMessage</p>
-    }
-
-    <h4>Aktualna kolejka produkcji</h4>
-    @if (GameState.ActiveProductions.Any())
-    {
-        <ul class="production-queue">
-            @foreach (var task in GameState.ActiveProductions)
+    <div class="production-layout">
+        <!-- Lewa kolumna: Produkty do produkcji -->
+        <div class="production-left">
+            @foreach (var product in GameState.Bakery.Products)
             {
-                var now = DateTime.Now;
-                var timePerItem = TimeSpan.FromSeconds(15);
-
-                double currentProgress = task.CurrentProgress;
-
-                if (task.LastStarted is DateTime started)
-                {
-                    var elapsed = now - started;
-                    currentProgress = Math.Min(1.0, elapsed.TotalSeconds / timePerItem.TotalSeconds);
-                }
-
-                var completedItems = task.TotalQuantity - task.QuantityRemaining;
-                var progressTotal = (completedItems + currentProgress) / task.TotalQuantity;
-                var percent = (int)(progressTotal * 100);
-                var secondsLeft = (int)((task.QuantityRemaining - 1 + (1.0 - currentProgress)) * timePerItem.TotalSeconds);
-
-                var taskClass = task.IsRunning ? "production-running" : "production-waiting";
-
-                <li class="@taskClass">
-                    <strong>@task.ProductName</strong>: @completedItems / @task.TotalQuantity
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width:@percent%"></div>
+                <div class="product-button" @onclick="() => TryStartProduction(product)">
+                    <img src="images/products/@product.IconFile" alt="@product.Name" class="product-icon" />
+                    <div class="ingredient-list">
+                        @foreach (var req in product.RequiredIngredients)
+                        {
+                            var owned = GameState.Bakery.Ingredients.FirstOrDefault(i => i.Name == req.Key)?.Quantity ?? 0;
+                            <div>@req.Key: @owned / @req.Value</div>
+                        }
                     </div>
-                    <div class="progress-time">@secondsLeft sek</div>
-                </li>
+                </div>
             }
-        </ul>
+        </div>
 
-    }
-    else
+        <!-- Prawa kolumna: Kolejka produkcji -->
+        <div class="production-right">
+            <h4>Aktualna kolejka produkcji</h4>
+            @if (GameState.ActiveProductions.Any())
+            {
+                <ul class="production-queue">
+                    @foreach (var task in GameState.ActiveProductions)
+                    {
+                        var now = DateTime.Now;
+                        var timePerItem = TimeSpan.FromSeconds(15);
+                        double currentProgress = task.CurrentProgress;
+
+                        if (task.LastStarted is DateTime started)
+                        {
+                            var elapsed = now - started;
+                            currentProgress = Math.Min(1.0, elapsed.TotalSeconds / timePerItem.TotalSeconds);
+                        }
+
+                        var completedItems = task.TotalQuantity - task.QuantityRemaining;
+                        var percent = (int)(((completedItems + currentProgress) / task.TotalQuantity) * 100);
+                        var secondsLeft = (int)((task.QuantityRemaining - 1 + (1.0 - currentProgress)) * timePerItem.TotalSeconds);
+
+                        var taskClass = task.IsRunning ? "production-running" : "production-waiting";
+                        var fillWidth = $"{percent}%";
+
+                        <li class="@taskClass">
+                            <div class="production-row">
+                                <img src="@($"images/products/{task.ProductName.ToLower().Replace(" ", "")}.png")"
+                                     alt="@task.ProductName"
+                                     class="production-icon" />
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:@fillWidth"></div>
+                                    @if (task.IsRunning)
+                                    {
+                                        <span class="progress-text">@secondsLeft sek</span>
+                                    }
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>Brak aktywnych produkcji.</p>
+            }
+        </div>
+    </div>
+    @if (showPopupError)
     {
-        <p>Brak aktywnych produkcji.</p>
+        <div class="error-popup @(fadeOut ? "fade-out" : "")">
+            @errorMessage
+        </div>
     }
-
 </div>
 
 @code {
@@ -74,6 +86,9 @@
     public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
+
+    private bool showPopupError = false;
+    private bool fadeOut = false;
 
     private async void TryStartProduction(Product product)
     {
@@ -87,12 +102,28 @@
 
         if (!enough)
         {
-            errorMessage = "Brakuje składników!";
+            await ShowError("Brakuje składników!");
             StateHasChanged();
             return;
         }
 
         GameState.StartTimedProduction(product.Name, 1);
         await GameState.SaveGameAsync();
+    }
+
+    private async Task ShowError(string message)
+    {
+        errorMessage = message;
+        showPopupError = true;
+        fadeOut = false;
+        StateHasChanged();
+
+        await Task.Delay(700);
+        fadeOut = true;
+        StateHasChanged();
+
+        await Task.Delay(500);
+        showPopupError = false;
+        StateHasChanged();
     }
 }
