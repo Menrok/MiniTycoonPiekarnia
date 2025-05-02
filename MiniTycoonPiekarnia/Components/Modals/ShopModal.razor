@@ -33,16 +33,12 @@
         }
     </div>
 
-    @if (showPopupError)
-    {
-        <div class="error-popup @(fadeOut ? "fade-out" : "")">
-            @errorMessage
-        </div>
-    }
+    <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
 
 @code {
-    private string? errorMessage;
+    private ErrorPopupController popup = new();
+
     private List<IngredientShop> ShopItems = IngredientList.GetInitialIngredients()
         .Select(i => new IngredientShop(i.Name, i.PurchasePrice))
         .ToList();
@@ -50,9 +46,6 @@
     private int currentQty;
     private int maxCapacity;
     private int percentage;
-
-    private bool showPopupError = false;
-    private bool fadeOut = false;
 
     protected override void OnInitialized()
     {
@@ -66,22 +59,20 @@
 
     private async Task Buy(IngredientShop item, int quantity)
     {
-        errorMessage = null;
-
         var total = quantity * item.Price;
-        if (!GameState.CanAfford(total))
+        if (!GameState.Economy.CanAfford(total))
         {
-            await ShowError("Za mało pieniędzy!");
+            await popup.ShowError("Za mało pieniędzy!");
             return;
         }
 
         if (GameState.Bakery.CurrentIngredientQuantity + quantity > GameState.Bakery.MaxIngredientCapacity)
         {
-            await ShowError("Brak miejsca w magazynie!");
+            await popup.ShowError("Brak miejsca w magazynie!");
             return;
         }
 
-        GameState.BuyIngredient(item.Name, item.Price, quantity);
+        GameState.Ingredients.BuyIngredient(item.Name, item.Price, quantity);
         await GameState.SaveGameAsync();
         UpdateStorageStats();
     }
@@ -91,21 +82,5 @@
         maxCapacity = GameState.Bakery.MaxIngredientCapacity;
         currentQty = GameState.Bakery.CurrentIngredientQuantity;
         percentage = maxCapacity > 0 ? (int)(100 * currentQty / maxCapacity) : 0;
-    }
-
-    private async Task ShowError(string message)
-    {
-        errorMessage = message;
-        showPopupError = true;
-        fadeOut = false;
-        StateHasChanged();
-
-        await Task.Delay(700);
-        fadeOut = true;
-        StateHasChanged();
-
-        await Task.Delay(500);
-        showPopupError = false;
-        StateHasChanged();
     }
 }

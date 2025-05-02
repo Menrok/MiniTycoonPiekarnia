@@ -32,7 +32,7 @@
 
     private int ExpansionLevel => CurrentSize - 3;
     private int CurrentCost => (int)(500 * Math.Pow(2, ExpansionLevel));
-    private bool CanAfford => GameState.CanAfford(CurrentCost);
+    private bool CanAfford => GameState.Economy.CanAfford(CurrentCost);
 
     private string ExpandDirection = "right";
 
@@ -45,14 +45,14 @@
     private void ExpandRight()
     {
         if (!CanExpandRight) return;
-        GameState.ExpandBakeryRight(CurrentCost);
+        GameState.Building.ExpandBakeryRight(CurrentCost);
         Close();
     }
 
     private void ExpandDown()
     {
         if (!CanExpandDown) return;
-        GameState.ExpandBakeryDown(CurrentCost);
+        GameState.Building.ExpandBakeryDown(CurrentCost);
         Close();
     }
 

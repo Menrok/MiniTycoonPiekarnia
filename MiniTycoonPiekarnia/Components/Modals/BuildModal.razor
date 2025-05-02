@@ -27,17 +27,14 @@
         <span>@rotation°</span>
     </div>
 
-    @if (errorMessage != null)
-    {
-        <p style="color:red">@errorMessage</p>
-    }
+<ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
 
 @code {
     [Parameter] public Tile Tile { get; set; } = null!;
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private string? errorMessage;
+    private ErrorPopupController popup = new();
     private int rotation = 0;
 
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
@@ -48,11 +45,11 @@
     private async Task TryBuild(BuildingType type)
     {
         var cost = GetBuildingCost(type);
-        var success = GameState.BuildBuilding(Tile.X, Tile.Y, type, cost, rotation);
+        var success = GameState.Building.BuildBuilding(Tile.X, Tile.Y, type, cost, rotation);
 
         if (!success)
         {
-            errorMessage = "Za mało pieniędzy lub budynek już istnieje.";
+            await popup.ShowError("Za mało pieniędzy lub budynek już istnieje.");
             return;
         }
 
@@ -68,8 +65,5 @@
         _ => 0m
     };
 
-    private void RotateLeft()
-    {
-        rotation = (rotation + 90) % 360;
-    }
+    private void RotateLeft() => rotation = (rotation + 90) % 360;
 }

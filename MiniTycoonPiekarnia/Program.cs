@@ -7,6 +7,7 @@ using MiniTycoonPiekarnia.Services;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddBlazoredLocalStorage();
+
 builder.Services.AddScoped<GameStateService>();
 builder.Services.AddSingleton<ModalService>();
 

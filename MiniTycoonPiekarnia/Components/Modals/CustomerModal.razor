@@ -35,19 +35,35 @@
     {
         <p>Brak klientów.</p>
     }
+
+    <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
 
 @code {
+    private ErrorPopupController popup = new();
+
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
     public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
 
     private int SecondsUntilNextCustomer =>
-    Math.Max(0, (int)(GameState.CustomerInterval - (DateTime.Now - GameState.LastCustomerTime)).TotalSeconds);
+        Math.Max(0, (int)(GameState.Customer.CustomerInterval - (DateTime.Now - GameState.Customer.LastCustomerTime)).TotalSeconds);
 
-    private void Fulfill(Customer customer)
+    private async void Fulfill(Customer customer)
     {
-        GameState.FulfillCustomer(customer);
+        bool canFulfill = customer.RequestedProducts.All(req =>
+        {
+            var prod = GameState.Bakery.Products.FirstOrDefault(p => p.Name == req.Key);
+            return prod != null && prod.Quantity >= req.Value;
+        });
+
+        if (!canFulfill)
+        {
+            await popup.ShowError("Brakuje wypieków, by zrealizować zamówienie!");
+            return;
+        }
+
+        GameState.Customer.FulfillCustomer(customer);
     }
 }

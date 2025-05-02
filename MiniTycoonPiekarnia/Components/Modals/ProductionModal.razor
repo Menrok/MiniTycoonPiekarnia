@@ -67,29 +67,19 @@
             }
         </div>
     </div>
-    @if (showPopupError)
-    {
-        <div class="error-popup @(fadeOut ? "fade-out" : "")">
-            @errorMessage
-        </div>
-    }
+    <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
 
 @code {
-    private string? errorMessage;
+    private ErrorPopupController popup = new();
 
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
     public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
 
-    private bool showPopupError = false;
-    private bool fadeOut = false;
-
     private async void TryStartProduction(Product product)
     {
-        errorMessage = null;
-
         var enough = product.RequiredIngredients.All(req =>
         {
             var ing = GameState.Bakery.Ingredients.FirstOrDefault(i => i.Name == req.Key);
@@ -98,28 +88,12 @@
 
         if (!enough)
         {
-            await ShowError("Brakuje składników!");
+            await popup.ShowError("Brakuje składników!");
             StateHasChanged();
             return;
         }
 
-        GameState.StartTimedProduction(product.Name, 1);
+        GameState.Production.StartTimedProduction(product.Name, 1);
         await GameState.SaveGameAsync();
-    }
-
-    private async Task ShowError(string message)
-    {
-        errorMessage = message;
-        showPopupError = true;
-        fadeOut = false;
-        StateHasChanged();
-
-        await Task.Delay(700);
-        fadeOut = true;
-        StateHasChanged();
-
-        await Task.Delay(500);
-        showPopupError = false;
-        StateHasChanged();
     }
 }

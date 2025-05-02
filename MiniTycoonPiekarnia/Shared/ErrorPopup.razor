@@ -1,0 +1,12 @@
+﻿@if (Visible)
+{
+    <div class="error-popup @(FadeOut ? "fade-out" : "")">
+        @Message
+    </div>
+}
+
+@code {
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public bool FadeOut { get; set; }
+}
