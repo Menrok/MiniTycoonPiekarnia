@@ -9,6 +9,7 @@ public static class ProductList
             Name = "Chleb",
             Quantity = 0,
             SalePrice = 7.5m,
+            ExpValue = 3,
             ProducedAmount = 1,
             ProductionTimeSeconds = 60,
             RequiredIngredients = new Dictionary<string, decimal>
@@ -22,6 +23,7 @@ public static class ProductList
             Name = "Bułka",
             Quantity = 0,
             SalePrice = 1.2m,
+            ExpValue = 1,
             ProducedAmount = 6,
             ProductionTimeSeconds = 45,
             RequiredIngredients = new Dictionary<string, decimal>
@@ -35,6 +37,7 @@ public static class ProductList
             Name = "Ciasto",
             Quantity = 0,
             SalePrice = 15.5m,
+            ExpValue = 5,
             ProducedAmount = 1,
             ProductionTimeSeconds = 90,
             RequiredIngredients = new Dictionary<string, decimal>

@@ -120,8 +120,12 @@ public class CustomerService
         bakery.CustomersHistory.Add(customer);
         bakery.CustomerSatisfaction = Math.Min(100, bakery.CustomerSatisfaction + 3);
 
+        int exp = bakery.GetExpForCustomerOrder(customer);
+        bakery.AddExperience(exp);
+
         _notifyCallback();
     }
+
 
     public void NotifyStateChanged() => _notifyCallback();
 }

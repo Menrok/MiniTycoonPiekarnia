@@ -6,6 +6,8 @@
     <h2>📊 Raporty piekarni</h2>
 
     <ul class="report-list">
+        <li><strong>Poziom piekarni:</strong> @GameState.Bakery.BakeryLevel</li>
+        <li><strong>Doświadczenie:</strong> @GameState.Bakery.Experience / @GameState.Bakery.ExperienceToNextLevel</li>
         <li><strong>Sprzedane wypieki:</strong> @TotalProductsSold</li>
         <li><strong>Obsłużeni klienci:</strong> @GameState.Bakery.CustomersHistory.Count</li>
         <li><strong>Zadowolenie klientów:</strong> @GameState.Bakery.CustomerSatisfaction %</li>
@@ -24,6 +26,9 @@
 @code {
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
     public void Dispose() => GameState.OnChange -= StateHasChanged;
+    
+    private double XPProgress =>
+    100.0 * GameState.Bakery.Experience / GameState.Bakery.ExperienceToNextLevel;
 
     private void Close() => ModalService.CloseModal();
 

@@ -6,6 +6,8 @@ public class Bakery
     public List<Product> Products { get; set; } = new();
     public decimal Money { get; set; } = 1000m;
     public int BakeryLevel { get; set; } = 1;
+    public int Experience { get; set; } = 0;
+    public int ExperienceToNextLevel => 100 + (BakeryLevel * 50);
     public int CustomerSatisfaction { get; set; } = 100;
     public List<Tile> Tiles { get; set; } = new();
     public int MapSize { get; set; } = 3;
@@ -19,4 +21,30 @@ public class Bakery
     public int CurrentProductQuantity => Products.Sum(p => p.Quantity);
     public decimal CurrentIngredientQuantity => Ingredients.Sum(i => i.Quantity);
 
+    public void AddExperience(int amount)
+    {
+        Experience += amount;
+        while (Experience >= ExperienceToNextLevel)
+        {
+            Experience -= ExperienceToNextLevel;
+            BakeryLevel++;
+        }
+    }
+
+    public int GetExpForCustomerOrder(Customer customer)
+    {
+        int exp = 0;
+        foreach (var kvp in customer.RequestedProducts)
+        {
+            var productName = kvp.Key;
+            var quantity = kvp.Value;
+
+            var product = Products.FirstOrDefault(p => p.Name == productName);
+            if (product != null)
+            {
+                exp += product.ExpValue * quantity;
+            }
+        }
+        return exp;
+    }
 }

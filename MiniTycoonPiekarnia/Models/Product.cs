@@ -8,6 +8,7 @@ public class Product
     public decimal SalePrice { get; set; }
     public int ProducedAmount { get; set; }
     public int ProductionTimeSeconds { get; set; }
+    public int ExpValue { get; set; }
 
     public Dictionary<string, decimal> RequiredIngredients { get; set; } = new();
 
