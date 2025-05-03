@@ -99,13 +99,16 @@ public class ProductionService
                 continue;
             }
 
+            var product = bakery.Products.FirstOrDefault(p => p.Name == task.ProductName);
+            if (product == null) continue;
+
+            var timePerItem = TimeSpan.FromSeconds(product.ProductionTimeSeconds);
             var elapsed = now - task.LastStarted!.Value;
-            task.CurrentProgress = elapsed.TotalSeconds / TimePerItem.TotalSeconds;
+            task.CurrentProgress = elapsed.TotalSeconds / timePerItem.TotalSeconds;
 
             if (task.CurrentProgress >= 1.0)
             {
-                var product = bakery.Products.First(p => p.Name == task.ProductName);
-                product.Quantity++;
+                product.Quantity += product.ProducedAmount;
                 task.QuantityRemaining--;
 
                 if (task.QuantityRemaining <= 0)

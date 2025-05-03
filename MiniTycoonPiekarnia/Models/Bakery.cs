@@ -17,6 +17,6 @@ public class Bakery
     public int MaxIngredientCapacity => 50 * Tiles.Count(t => t.Building == BuildingType.Shelf);
     public int MaxProductCapacity => 50 * Tiles.Count(t => t.Building == BuildingType.Website);
     public int CurrentProductQuantity => Products.Sum(p => p.Quantity);
-    public int CurrentIngredientQuantity => Ingredients.Sum(i => i.Quantity);
+    public decimal CurrentIngredientQuantity => Ingredients.Sum(i => i.Quantity);
 
 }

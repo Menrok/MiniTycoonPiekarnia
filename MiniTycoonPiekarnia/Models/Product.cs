@@ -5,8 +5,11 @@ public class Product
     public string Name { get; set; } = string.Empty;
     public int Quantity { get; set; } = 0;
     public int QuantitySold { get; set; }
-    public decimal SalePrice { get; set; } = 0m;
-    public Dictionary<string, int> RequiredIngredients { get; set; } = new();
+    public decimal SalePrice { get; set; }
+    public int ProducedAmount { get; set; }
+    public int ProductionTimeSeconds { get; set; }
+
+    public Dictionary<string, decimal> RequiredIngredients { get; set; } = new();
 
     public string IconFile => $"{Normalize(Name)}.png";
 

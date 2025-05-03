@@ -10,6 +10,7 @@
             {
                 <div class="product-button" @onclick="() => TryStartProduction(product)">
                     <img src="images/products/@product.IconFile" alt="@product.Name" class="product-icon" />
+                    <span class="product-amount">+@product.ProducedAmount</span>
                     <div class="ingredient-list">
                         @foreach (var req in product.RequiredIngredients)
                         {
@@ -28,7 +29,9 @@
                     @foreach (var task in GameState.ActiveProductions)
                     {
                         var now = DateTime.Now;
-                        var timePerItem = TimeSpan.FromSeconds(15);
+                        var product = GameState.Bakery.Products.FirstOrDefault(p => p.Name == task.ProductName);
+                        var timePerItem = TimeSpan.FromSeconds(product?.ProductionTimeSeconds ?? 15);
+
                         double currentProgress = task.CurrentProgress;
 
                         if (task.LastStarted is DateTime started)
@@ -40,7 +43,6 @@
                         var completedItems = task.TotalQuantity - task.QuantityRemaining;
                         var percent = (int)(((completedItems + currentProgress) / task.TotalQuantity) * 100);
                         var secondsLeft = (int)((task.QuantityRemaining - 1 + (1.0 - currentProgress)) * timePerItem.TotalSeconds);
-                        var product = GameState.Bakery.Products.FirstOrDefault(p => p.Name == task.ProductName);
 
                         var taskClass = task.IsRunning ? "production-running" : "production-waiting";
                         var fillWidth = $"{percent}%";

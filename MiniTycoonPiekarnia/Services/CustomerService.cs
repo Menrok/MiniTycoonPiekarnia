@@ -9,8 +9,11 @@ public class CustomerService
     private readonly Action _notifyCallback;
 
     private System.Timers.Timer? _customerTimer;
+    private readonly Random _random = new();
+
     public DateTime LastCustomerTime { get; private set; } = DateTime.Now;
-    public TimeSpan CustomerInterval => TimeSpan.FromSeconds(30);
+    private TimeSpan _currentCustomerInterval = TimeSpan.FromSeconds(45);
+    public TimeSpan CustomerInterval => _currentCustomerInterval;
 
     public CustomerService(Func<Bakery> getBakery, Func<Task> saveCallback, Action notifyCallback)
     {
@@ -31,10 +34,11 @@ public class CustomerService
 
     private async Task CustomerTick()
     {
-        if (DateTime.Now - LastCustomerTime >= CustomerInterval)
+        if (DateTime.Now - LastCustomerTime >= _currentCustomerInterval)
         {
             await HandleCustomerVisit();
             LastCustomerTime = DateTime.Now;
+            _currentCustomerInterval = TimeSpan.FromSeconds(_random.Next(30, 60)); // nowy losowy interwał
         }
 
         var bakery = _getBakery();
@@ -55,29 +59,37 @@ public class CustomerService
     private async Task HandleCustomerVisit()
     {
         var bakery = _getBakery();
-        var random = new Random();
         var possibleProducts = bakery.Products.Where(p => p.RequiredIngredients.Any()).ToList();
         if (!possibleProducts.Any()) return;
 
         var requested = new Dictionary<string, int>();
-        int count = random.Next(1, 3);
-        for (int i = 0; i < count; i++)
+
+        foreach (var product in possibleProducts)
         {
-            var product = possibleProducts[random.Next(possibleProducts.Count)];
-            if (requested.ContainsKey(product.Name))
-                requested[product.Name]++;
-            else
-                requested[product.Name] = 1;
+            int quantity = product.Name switch
+            {
+                "Ciasto" => _random.Next(0, 2),
+                "Bułka" => _random.Next(0, 9),
+                "Chleb" => _random.Next(0, 3),
+                _ => 0
+            };
+
+            if (quantity > 0)
+                requested[product.Name] = quantity;
         }
 
-        bakery.CustomersWaiting.Add(new Customer
+        if (requested.Count > 0)
         {
-            RequestedProducts = requested,
-            TimeCreated = DateTime.Now,
-        });
+            bakery.CustomersWaiting.Add(new Customer
+            {
+                RequestedProducts = requested,
+                TimeCreated = DateTime.Now,
+                MaxWaitTime = TimeSpan.FromSeconds(_random.Next(300, 420))
+            });
 
-        await _saveCallback();
-        _notifyCallback();
+            await _saveCallback();
+            _notifyCallback();
+        }
     }
 
     public void FulfillCustomer(Customer customer)
