@@ -1,5 +1,5 @@
 ﻿using MiniTycoonPiekarnia.Models.Bakery;
-using MiniTycoonPiekarnia.Models.Custromers;
+using MiniTycoonPiekarnia.Models.Customers;
 
 namespace MiniTycoonPiekarnia.Services;
 

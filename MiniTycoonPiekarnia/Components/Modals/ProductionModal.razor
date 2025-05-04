@@ -115,9 +115,9 @@
             return;
         }
 
-        if (!GameState.Bakery.Buildings.Any(t => t.Type == BuildingType.Website))
+        if (!GameState.Bakery.Buildings.Any(t => t.Type == BuildingType.DisplayShelf))
         {
-            await popup.ShowError("Zbuduj witrynę, aby przechowywać wypieki.");
+            await popup.ShowError("Zbuduj witrynę chłodniczą, aby przechowywać wypieki.");
             StateHasChanged();
             return;
         }
@@ -125,7 +125,7 @@
         var availableSpace = GameState.Bakery.MaxProductCapacity - GameState.Bakery.CurrentProductQuantity;
         if (availableSpace < product.ProducedAmount)
         {
-            await popup.ShowError("Brak miejsca w witrynie na kolejne wypieki!");
+            await popup.ShowError("Brak miejsca w witrynie chłodniczej na kolejne wypieki!");
             StateHasChanged();
             return;
         }

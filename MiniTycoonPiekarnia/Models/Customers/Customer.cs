@@ -1,4 +1,4 @@
-﻿namespace MiniTycoonPiekarnia.Models.Custromers;
+﻿namespace MiniTycoonPiekarnia.Models.Customers;
 
 public class Customer
 {

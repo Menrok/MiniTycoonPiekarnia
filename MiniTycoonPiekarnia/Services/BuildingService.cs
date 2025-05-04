@@ -41,7 +41,7 @@ public class BuildingService
         {
             BuildingType.Oven => "buy-oven",
             BuildingType.Shelf => "buy-shelf",
-            BuildingType.Website => "buy-cooling",
+            BuildingType.DisplayShelf => "buy-cooling",
             _ => null
         })!);
 
@@ -104,7 +104,7 @@ public class BuildingService
         {
             BuildingType.Oven => 200m,
             BuildingType.Shelf => 100m,
-            BuildingType.Website => 150m,
+            BuildingType.DisplayShelf => 150m,
             _ => 0m
         };
 

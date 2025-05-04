@@ -2,7 +2,7 @@
 using MiniTycoonPiekarnia.Models.Bakery;
 using MiniTycoonPiekarnia.Models.Ingredients;
 using MiniTycoonPiekarnia.Models.Products;
-using MiniTycoonPiekarnia.Models.Custromers;
+using MiniTycoonPiekarnia.Models.Customers;
 
 namespace MiniTycoonPiekarnia.Services;
 

@@ -4,5 +4,5 @@ public enum BuildingType
 {
     Oven,
     Shelf,
-    Website
+    DisplayShelf
 }

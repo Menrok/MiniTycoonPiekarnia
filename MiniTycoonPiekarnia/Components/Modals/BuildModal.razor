@@ -14,7 +14,7 @@
             <div class="label">Półka</div>
             <div class="price">100 zł</div>
         </div>
-        <div class="building-card" @onclick="() => StartPlacement(BuildingType.Website)">
+        <div class="building-card" @onclick="() => StartPlacement(BuildingType.DisplayShelf)">
             <img src="images/building/witryna.png" alt="Witryna chłodnicza" />
             <div class="label">Witryna chłodnicza</div>
             <div class="price">150 zł</div>
@@ -58,7 +58,7 @@
     {
         BuildingType.Oven => 200m,
         BuildingType.Shelf => 100m,
-        BuildingType.Website => 150m,
+        BuildingType.DisplayShelf => 150m,
         _ => 0m
     };
 }

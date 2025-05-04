@@ -1,5 +1,5 @@
 ﻿using MiniTycoonPiekarnia.Models.Campaign;
-using MiniTycoonPiekarnia.Models.Custromers;
+using MiniTycoonPiekarnia.Models.Customers;
 using MiniTycoonPiekarnia.Models.Ingredients;
 using MiniTycoonPiekarnia.Models.Products;
 
@@ -32,7 +32,7 @@ public class Bakery
     public CampaignProgress CampaignProgress { get; set; } = new();
 
     public int MaxIngredientCapacity => 50 * Buildings.Count(b => b.Type == BuildingType.Shelf);
-    public int MaxProductCapacity => 50 * Buildings.Count(b => b.Type == BuildingType.Website);
+    public int MaxProductCapacity => 50 * Buildings.Count(b => b.Type == BuildingType.DisplayShelf);
     public decimal CurrentIngredientQuantity => Ingredients.Sum(i => i.Quantity);
     public int CurrentProductQuantity => Products.Sum(p => p.Quantity);
 
