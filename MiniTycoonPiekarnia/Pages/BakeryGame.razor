@@ -1,10 +1,10 @@
 ﻿@page "/"
 
 <div class="bakery-map">
-@foreach (var y in Enumerable.Range(0, GameState.Bakery.MapSize))
-{
-    <div class="row">
-        @foreach (var x in Enumerable.Range(0, GameState.Bakery.MapSize))
+    @foreach (var y in Enumerable.Range(0, GameState.Bakery.MapHeight))
+    {
+        <div class="row">
+            @foreach (var x in Enumerable.Range(0, GameState.Bakery.MapWidth))
         {
             var tile = GameState.Bakery.Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
             if (tile != null)

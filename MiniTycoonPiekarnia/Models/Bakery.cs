@@ -10,7 +10,8 @@ public class Bakery
     public int ExperienceToNextLevel => 100 + (BakeryLevel * 50);
     public int CustomerSatisfaction { get; set; } = 100;
     public List<Tile> Tiles { get; set; } = new();
-    public int MapSize { get; set; } = 3;
+    public int MapWidth { get; set; } = 3;
+    public int MapHeight { get; set; } = 3;
     public List<Customer> CustomersWaiting { get; set; } = new();
     public List<Customer> CustomersHistory { get; set; } = new();
     public List<ProductionTask> ActiveProductions { get; set; } = new();

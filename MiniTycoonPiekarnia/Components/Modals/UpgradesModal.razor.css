@@ -50,3 +50,41 @@
 .new-tile {
     background-color: #d0f0d0;
 }
+
+.expand-card {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 5px;
+    width: 240px;
+    height: 100px;
+    background-color: #fafafa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+    .expand-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        background-color: #f0f8ff;
+    }
+
+    .expand-card h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+.expand-cost {
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: #0a0;
+    font-size: 1.1rem;
+}
+
+.expand-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}

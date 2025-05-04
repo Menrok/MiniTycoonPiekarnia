@@ -7,7 +7,8 @@
     @if (GameState.Bakery.CustomersWaiting.Any())
     {
         <div class="customer-grid">
-            @foreach (var customer in GameState.Bakery.CustomersWaiting)
+            @foreach (var customer in GameState.Bakery.CustomersWaiting
+           .OrderBy(c => c.MaxWaitTime - (DateTime.Now - c.TimeCreated)))
             {
                 var totalValue = customer.RequestedProducts.Sum(req =>
                 GameState.Bakery.Products.First(p => p.Name == req.Key).SalePrice * req.Value);
@@ -16,7 +17,7 @@
                 <div class="customer-box" @onclick="() => Fulfill(customer)">
                     <div class="customer-header">
                         <span><strong>Zamówienie</strong></span>
-                        <span class="customer-timer">@timeLeft.Minutes:@timeLeft.Seconds</span>
+                        <span class="customer-timer">@($"{timeLeft.Minutes:D2}:{timeLeft.Seconds:D2}")</span>
                     </div>
 
                     <div class="customer-items">

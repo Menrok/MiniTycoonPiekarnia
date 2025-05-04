@@ -3,40 +3,52 @@
 <div class="modal-overlay" @onclick="Close"></div>
 
 <div class="modal" @onclick:stopPropagation>
-    <h2>📊 Raporty piekarni</h2>
+    <section class="report-section">
+        <h3>🏅 Statystyki ogólne</h3>
+        <ul class="report-list">
+            <li><strong>Poziom piekarni:</strong> @GameState.Bakery.BakeryLevel</li>
+            <li><strong>Doświadczenie:</strong></li>
+        </ul>
+        <div class="xp-bar-container">
+            <div class="xp-bar-fill" style="width:@XPBarWidth"></div>
+            <div class="xp-bar-text">
+                @GameState.Bakery.Experience / @GameState.Bakery.ExperienceToNextLevel
+            </div>
+        </div>
 
-    <ul class="report-list">
-        <li><strong>Poziom piekarni:</strong> @GameState.Bakery.BakeryLevel</li>
-        <li><strong>Doświadczenie:</strong> @GameState.Bakery.Experience / @GameState.Bakery.ExperienceToNextLevel</li>
-        <li><strong>Sprzedane wypieki:</strong> @TotalProductsSold</li>
-        <li><strong>Obsłużeni klienci:</strong> @GameState.Bakery.CustomersHistory.Count</li>
-        <li><strong>Zadowolenie klientów:</strong> @GameState.Bakery.CustomerSatisfaction %</li>
-        <li><strong>Stan konta:</strong> @GameState.Bakery.Money.ToString("0.00") zł</li>
-    </ul>
+    </section>
 
-    <h4>Najczęściej sprzedawane produkty:</h4>
-    <ul>
-        @foreach (var item in TopProducts)
-        {
-            <li>@item.Name: @item.QuantitySold sprzedanych</li>
-        }
-    </ul>
+    <section class="report-section">
+        <h3>👥 Klienci</h3>
+        <ul class="report-list">
+            <li><strong>Obsłużeni klienci:</strong> @GameState.Bakery.CustomersHistory.Count</li>
+            <li><strong>Zadowolenie klientów:</strong> @GameState.Bakery.CustomerSatisfaction %</li>
+        </ul>
+    </section>
+
+    <section class="report-section">
+        <h3>🥐 Produkty</h3>
+        <ul class="report-list">
+            <li><strong>Łącznie sprzedane wypieki:</strong> @TotalProductsSold</li>
+        </ul>
+    </section>
 </div>
 
 @code {
+    private string XPBarWidth => $"{XPProgress}%";
+
     protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
     public void Dispose() => GameState.OnChange -= StateHasChanged;
-    
-    private double XPProgress =>
-    100.0 * GameState.Bakery.Experience / GameState.Bakery.ExperienceToNextLevel;
 
     private void Close() => ModalService.CloseModal();
 
-    private int TotalProductsSold => GameState.Bakery.Products.Sum(p => p.QuantitySold);
+    private int XPProgress =>
+        GameState.Bakery.ExperienceToNextLevel == 0 ? 0 : Math.Min(100, (int)(100.0 * GameState.Bakery.Experience / GameState.Bakery.ExperienceToNextLevel));
+    private int TotalProductsSold =>
+        GameState.Bakery.Products.Sum(p => p.QuantitySold);
 
-    private List<Product> TopProducts => GameState.Bakery.Products
+    private List<Product> SortedProductsBySold => GameState.Bakery.Products
         .Where(p => p.QuantitySold > 0)
         .OrderByDescending(p => p.QuantitySold)
-        .Take(5)
         .ToList();
 }

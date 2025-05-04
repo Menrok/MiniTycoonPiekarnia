@@ -2,45 +2,55 @@
 
 <div class="modal-overlay" @onclick="Close"></div>
 
-<div class="modal bakery-expand-modal">
-    <h2>Powiększ piekarnię</h2>
+<div class="modal">
+    <div class="expand-options">
+        @if (CanExpandRight)
+        {
+            <div class="expand-card" @onclick="ExpandRight">
+                <h3>Rozbuduj w prawo</h3>
+                Nowy rozmiar: @(CurrentWidth + 1) x @CurrentHeight
+                <div class="expand-cost">@CurrentCost zł</div>
+            </div>
+        }
+        else
+        {
+            <div class="expand-card disabled">
+                <h3>Rozbuduj w prawo</h3>
+                Nowy rozmiar: @(CurrentWidth + 1) x @CurrentHeight
+                <div class="expand-cost">@CurrentCost zł</div>
+            </div>
+        }
 
-    @if (CanExpandRight)
-    {
-        <button @onclick="ExpandRight">Rozszerz w prawo (do @(CurrentSize + 1)x@CurrentSize)</button>
-    }
-    else
-    {
-        <button disabled>Rozszerz w prawo</button>
-    }
-
-    @if (CanExpandDown)
-    {
-        <button @onclick="ExpandDown">Rozszerz w dół (do @CurrentSize x @(CurrentSize + 1))</button>
-    }
-    else
-    {
-        <button disabled>Rozszerz w dół</button>
-    }
-
-    <p>Koszt: @CurrentCost zł</p>
+        @if (CanExpandDown)
+        {
+            <div class="expand-card" @onclick="ExpandDown">
+                <h3>Rozbuduj w dół</h3>
+                Nowy rozmiar: @CurrentWidth x @(CurrentHeight + 1)
+                <div class="expand-cost">@CurrentCost zł</div>
+            </div>
+        }
+        else
+        {
+            <div class="expand-card disabled">
+                <h3>Rozbuduj w dół</h3>
+                Nowy rozmiar: @CurrentWidth x @(CurrentHeight + 1)
+                <div class="expand-cost">@CurrentCost zł</div>
+            </div>
+        }
+    </div>
 </div>
 
 @code {
-    private int CurrentSize => GameState.Bakery.MapSize;
+    private int CurrentWidth => GameState.Bakery.MapWidth;
+    private int CurrentHeight => GameState.Bakery.MapHeight;
     private int MaxSize => 10;
 
-    private int ExpansionLevel => CurrentSize - 3;
+    private int ExpansionLevel => (CurrentWidth + CurrentHeight) - 6;
     private int CurrentCost => (int)(500 * Math.Pow(2, ExpansionLevel));
     private bool CanAfford => GameState.Economy.CanAfford(CurrentCost);
 
-    private string ExpandDirection = "right";
-
-    private int NewWidth => ExpandDirection == "right" && CanExpandRight ? CurrentSize + 1 : CurrentSize;
-    private int NewHeight => ExpandDirection == "down" && CanExpandDown ? CurrentSize + 1 : CurrentSize;
-
-    private bool CanExpandRight => CurrentSize < MaxSize && CanAfford;
-    private bool CanExpandDown => CurrentSize < MaxSize && CanAfford;
+    private bool CanExpandRight => CurrentWidth < MaxSize && CanAfford;
+    private bool CanExpandDown => CurrentHeight < MaxSize && CanAfford;
 
     private void ExpandRight()
     {

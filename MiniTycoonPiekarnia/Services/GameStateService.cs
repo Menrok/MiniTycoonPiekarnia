@@ -29,7 +29,7 @@ public class GameStateService
         _buildingService = new BuildingService(() => Bakery, SaveGameAsync, NotifyStateChanged);
     }
 
-    public IReadOnlyList<ProductionTask> ActiveProductions => Bakery.ActiveProductions;
+    public List<ProductionTask> ActiveProductions => Bakery.ActiveProductions;
     public ProductionService Production => _productionService;
     public CustomerService Customer => _customerService;
     public BuildingService Building => _buildingService;
@@ -58,7 +58,6 @@ public class GameStateService
 
     private void InitializeBakery()
     {
-        Bakery.MapSize = 3;
         Bakery.Tiles = new List<Tile>();
         Bakery.Products = ProductList.GetInitialProducts();
         Bakery.Ingredients = IngredientList.GetInitialIngredients();
@@ -66,12 +65,13 @@ public class GameStateService
         Bakery.CustomersHistory = new List<Customer>();
         Bakery.ActiveProductions = new List<ProductionTask>();
 
-        for (int y = 0; y < Bakery.MapSize; y++)
+        for (int y = 0; y < Bakery.MapHeight; y++)
         {
-            for (int x = 0; x < Bakery.MapSize; x++)
+            for (int x = 0; x < Bakery.MapWidth; x++)
             {
                 Bakery.Tiles.Add(new Tile { X = x, Y = y });
             }
         }
+
     }
 }

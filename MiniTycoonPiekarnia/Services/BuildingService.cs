@@ -35,14 +35,14 @@ public class BuildingService
     public async void ExpandBakeryRight(int cost)
     {
         var bakery = _getBakery();
-        if (bakery.Money < cost || bakery.MapSize >= 10) return;
+        if (bakery.Money < cost || bakery.MapWidth >= 10) return;
 
-        int newX = bakery.MapSize;
-        for (int y = 0; y < bakery.MapSize; y++)
+        int newX = bakery.MapWidth;
+        for (int y = 0; y < bakery.MapHeight; y++)
             bakery.Tiles.Add(new Tile { X = newX, Y = y });
 
         bakery.Money -= cost;
-        bakery.MapSize++;
+        bakery.MapWidth++;
 
         _notifyCallback();
         await _saveCallback();
@@ -51,14 +51,14 @@ public class BuildingService
     public async void ExpandBakeryDown(int cost)
     {
         var bakery = _getBakery();
-        if (bakery.Money < cost || bakery.MapSize >= 10) return;
+        if (bakery.Money < cost || bakery.MapHeight >= 10) return;
 
-        int newY = bakery.MapSize;
-        for (int x = 0; x < bakery.MapSize; x++)
+        int newY = bakery.MapHeight;
+        for (int x = 0; x < bakery.MapWidth; x++)
             bakery.Tiles.Add(new Tile { X = x, Y = newY });
 
         bakery.Money -= cost;
-        bakery.MapSize++;
+        bakery.MapHeight++;
 
         _notifyCallback();
         await _saveCallback();

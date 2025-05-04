@@ -58,7 +58,20 @@
                                         <span class="progress-text">@secondsLeft sek</span>
                                     }
                                 </div>
+                                <div class="production-controls">
+                                    @if (task.IsRunning)
+                                    {
+                                        <button @onclick="() => CancelTask(task)" title="Anuluj">❌</button>
+                                    }
+                                    else
+                                    {
+                                        <button @onclick="() => MoveUp(task)" title="Przesuń wyżej">🔼</button>
+                                        <button @onclick="() => MoveDown(task)" title="Przesuń niżej">🔽</button>
+                                        <button @onclick="() => CancelTask(task)" title="Anuluj">❌</button>
+                                    }
+                                </div>
                             </div>
+
                         </li>
                     }
                 </ul>
@@ -95,7 +108,73 @@
             return;
         }
 
+        if (!GameState.Bakery.Tiles.Any(t => t.Building == BuildingType.Oven))
+        {
+            await popup.ShowError("Zbuduj piec, aby rozpocząć produkcję.");
+            StateHasChanged();
+            return;
+        }
+
+        if (!GameState.Bakery.Tiles.Any(t => t.Building == BuildingType.Website))
+        {
+            await popup.ShowError("Zbuduj witrynę, aby przechowywać wypieki.");
+            StateHasChanged();
+            return;
+        }
+
+        var availableSpace = GameState.Bakery.MaxProductCapacity - GameState.Bakery.CurrentProductQuantity;
+        if (availableSpace < product.ProducedAmount)
+        {
+            await popup.ShowError("Brak miejsca w witrynie na kolejne wypieki!");
+            StateHasChanged();
+            return;
+        }
+
         GameState.Production.StartTimedProduction(product.Name, 1);
         await GameState.SaveGameAsync();
+    }
+
+    private void MoveUp(ProductionTask task)
+    {
+        var list = GameState.Bakery.ActiveProductions;
+        int index = list.IndexOf(task);
+        if (index > 0)
+        {
+            list.RemoveAt(index);
+            list.Insert(index - 1, task);
+            StateHasChanged();
+        }
+    }
+
+    private void MoveDown(ProductionTask task)
+    {
+        var list = GameState.Bakery.ActiveProductions;
+        int index = list.IndexOf(task);
+        if (index < list.Count - 1 && index >= 0)
+        {
+            list.RemoveAt(index);
+            list.Insert(index + 1, task);
+            StateHasChanged();
+        }
+    }
+
+    private void CancelTask(ProductionTask task)
+    {
+        var bakery = GameState.Bakery;
+        var product = bakery.Products.FirstOrDefault(p => p.Name == task.ProductName);
+        if (product != null && !task.IsRunning)
+        {
+            foreach (var req in product.RequiredIngredients)
+            {
+                var ingredient = bakery.Ingredients.FirstOrDefault(i => i.Name == req.Key);
+                if (ingredient != null)
+                {
+                    ingredient.Quantity += req.Value * task.QuantityRemaining;
+                }
+            }
+        }
+
+        bakery.ActiveProductions.Remove(task);
+        StateHasChanged();
     }
 }
