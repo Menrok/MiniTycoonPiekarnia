@@ -1,4 +1,4 @@
-﻿using MiniTycoonPiekarnia.Models;
+﻿using MiniTycoonPiekarnia.Models.Bakery;
 
 namespace MiniTycoonPiekarnia.Services;
 

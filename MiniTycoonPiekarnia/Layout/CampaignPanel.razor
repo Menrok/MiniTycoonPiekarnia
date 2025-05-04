@@ -1,0 +1,54 @@
+﻿@{
+    var step = GameState.Campaign.CurrentStep;
+}
+
+@if (step != null)
+{
+    <div class="campaign-panel">
+        <h3>@step.Title</h3>
+        <h4>@step.Subtitle</h4>
+        <p>@step.Description</p>
+
+        <ul>
+            @foreach (var objective in step.Objectives)
+            {
+                <li class="campaign-objective">
+                    <span class="checkmark">
+                        @(objective.IsCompleted ? "✔️" : "⬜")
+                    </span>
+                    @FormatObjective(objective)
+                </li>
+            }
+        </ul>
+
+        @if (step.Reward is not null)
+        {
+            <div class="reward-info">
+                @if (step.Reward.Money > 0)
+                {
+                    <div>🎁 Nagroda: @step.Reward.Money zł</div>
+                }
+                @if (step.Reward.Experience > 0)
+                {
+                    <div>⭐ Doświadczenie: @step.Reward.Experience</div>
+                }
+            </div>
+        }
+    </div>
+}
+
+@code {
+    protected override void OnInitialized() => GameState.OnChange += StateHasChanged;
+    public void Dispose() => GameState.OnChange -= StateHasChanged;
+
+    private string FormatObjective(CampaignObjective obj)
+    {
+        if (obj.Id == "earn-200")
+        {
+            var earned = GameState.Bakery.TotalEarned;
+            return $"{obj.Description} ({Math.Min((int)earned, 200)} / 200)";
+        }
+
+        return obj.Description;
+    }
+}

@@ -121,3 +121,17 @@
         .buy-buttons button:hover {
             background-color: #ddd;
         }
+
+.shop-tabs button {
+    padding: 6px 16px;
+    margin: 4px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.shop-tabs .active-tab {
+    background-color: #999;
+    color: white;
+    font-weight: bold;
+}

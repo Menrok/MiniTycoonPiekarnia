@@ -2,36 +2,59 @@
 
 <div class="modal-overlay" @onclick="Close"></div>
 <div class="modal" @onclick:stopPropagation>
-    <h2>Sklep ze składnikami</h2>
+    <div class="shop-tabs">
+        <button class="@GetTabClass(ShopTab.Ingredients)" @onclick="() => SetTab(ShopTab.Ingredients)">Składniki</button>
+        <button class="@GetTabClass(ShopTab.Recipes)" @onclick="() => SetTab(ShopTab.Recipes)">Przepisy</button>
+    </div>
 
-    <div class="storage-bar-wrapper">
-        <div class="storage-bar">
-            <div class="storage-fill" style="width:@percentage%">
-                <span class="storage-label">
-                    Magazyn: @currentQty / @maxCapacity
-                </span>
+    @if (activeTab == ShopTab.Ingredients)
+    {
+        <div class="storage-bar-wrapper">
+            <div class="storage-bar">
+                <div class="storage-fill" style="width:@percentage%">
+                    <span class="storage-label">
+                        Magazyn: @currentQty / @maxCapacity
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
-
-
-    <div class="shop-grid">
-        @foreach (var item in ShopItems)
-        {
-            var currentQty = GameState.Bakery.Ingredients.FirstOrDefault(i => i.Name == item.Name)?.Quantity ?? 0;
-            <div class="shop-item">
-                <div class="ingredient-box" title="@item.Name">
-                    <img src="images/ingredients/@item.IconFile" class="ingredient-icon" />
-                    <div class="ingredient-qty">@currentQty</div>
+        <div class="shop-grid">
+            @foreach (var item in ShopItems)
+            {
+                var currentQty = GameState.Bakery.Ingredients.FirstOrDefault(i => i.Name == item.Name)?.Quantity ?? 0;
+                <div class="shop-item">
+                    <div class="ingredient-box" title="@item.Name">
+                        <img src="images/ingredients/@item.IconFile" class="ingredient-icon" />
+                        <div class="ingredient-qty">@currentQty</div>
+                    </div>
+                    <div class="buy-buttons">
+                        <button @onclick="() => Buy(item, 1)">Kup 1 (@(item.Price * 1) zł)</button>
+                        <button @onclick="() => Buy(item, 5)">Kup 5 (@(item.Price * 5) zł)</button>
+                        <button @onclick="() => Buy(item, 10)">Kup 10 (@(item.Price * 10) zł)</button>
+                    </div>
                 </div>
-                <div class="buy-buttons">
-                    <button @onclick="() => Buy(item, 1)">Kup 1 (@(item.Price * 1) zł)</button>
-                    <button @onclick="() => Buy(item, 5)">Kup 5 (@(item.Price * 5) zł)</button>
-                    <button @onclick="() => Buy(item, 10)">Kup 10 (@(item.Price * 10) zł)</button>
+            }
+        </div>
+    }
+    else if (activeTab == ShopTab.Recipes)
+    {
+        <div class="shop-grid">
+            @foreach (var recipe in GameState.Bakery.Recipes)
+            {
+                <div class="shop-item">
+                    <strong>@recipe.ProductName</strong><br />
+                    @if (recipe.IsUnlocked)
+                    {
+                        <span class="unlocked-label">✅ Odblokowano</span>
+                    }
+                    else
+                    {
+                        <button @onclick="() => UnlockRecipe(recipe)">🔓 Kup przepis (@recipe.UnlockCost zł)</button>
+                    }
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 
     <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
@@ -39,9 +62,10 @@
 @code {
     private ErrorPopupController popup = new();
 
-    private List<IngredientShop> ShopItems = IngredientList.GetInitialIngredients()
-        .Select(i => new IngredientShop(i.Name, i.PurchasePrice))
-        .ToList();
+    private enum ShopTab { Ingredients, Recipes }
+    private ShopTab activeTab = ShopTab.Ingredients;
+
+    private IEnumerable<IngredientShop> ShopItems => GetAvailableShopIngredients();
 
     private decimal currentQty;
     private int maxCapacity;
@@ -56,6 +80,24 @@
     public void Dispose() => GameState.OnChange -= StateHasChanged;
 
     private void Close() => ModalService.CloseModal();
+
+    private IEnumerable<IngredientShop> GetAvailableShopIngredients()
+    {
+        var unlockedProducts = GameState.Bakery.Recipes
+            .Where(r => r.IsUnlocked)
+            .Select(r => r.ProductName)
+            .ToHashSet();
+
+        var neededIngredients = GameState.Bakery.Products
+            .Where(p => unlockedProducts.Contains(p.Name))
+            .SelectMany(p => p.RequiredIngredients.Keys)
+            .Distinct()
+            .ToHashSet();
+
+        return IngredientList.GetInitialIngredients()
+            .Where(i => neededIngredients.Contains(i.Name))
+            .Select(i => new IngredientShop(i.Name, i.PurchasePrice));
+    }
 
     private async Task Buy(IngredientShop item, int quantity)
     {
@@ -77,10 +119,28 @@
         UpdateStorageStats();
     }
 
+    private async Task UnlockRecipe(Recipe recipe)
+    {
+        if (recipe.IsUnlocked) return;
+
+        if (!GameState.Economy.CanAfford(recipe.UnlockCost))
+        {
+            await popup.ShowError("Za mało pieniędzy!");
+            return;
+        }
+
+        recipe.IsUnlocked = true;
+        GameState.Economy.SpendMoney(recipe.UnlockCost);
+        await GameState.SaveGameAsync();
+    }
+
     private void UpdateStorageStats()
     {
         maxCapacity = GameState.Bakery.MaxIngredientCapacity;
         currentQty = GameState.Bakery.CurrentIngredientQuantity;
         percentage = maxCapacity > 0 ? (int)(100 * currentQty / maxCapacity) : 0;
     }
+
+    private void SetTab(ShopTab tab) => activeTab = tab;
+    private string GetTabClass(ShopTab tab) => tab == activeTab ? "active-tab" : "";
 }

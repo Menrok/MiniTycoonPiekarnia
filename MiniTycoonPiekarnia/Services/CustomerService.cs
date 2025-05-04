@@ -1,9 +1,11 @@
-﻿using MiniTycoonPiekarnia.Models;
+﻿using MiniTycoonPiekarnia.Models.Bakery;
+using MiniTycoonPiekarnia.Models.Custromers;
 
 namespace MiniTycoonPiekarnia.Services;
 
 public class CustomerService
 {
+    private readonly CampaignService _campaignService;
     private readonly Func<Bakery> _getBakery;
     private readonly Func<Task> _saveCallback;
     private readonly Action _notifyCallback;
@@ -15,11 +17,12 @@ public class CustomerService
     private TimeSpan _currentCustomerInterval = TimeSpan.FromSeconds(45);
     public TimeSpan CustomerInterval => _currentCustomerInterval;
 
-    public CustomerService(Func<Bakery> getBakery, Func<Task> saveCallback, Action notifyCallback)
+    public CustomerService(Func<Bakery> getBakery, Func<Task> saveCallback, Action notifyCallback, CampaignService campaignService)
     {
         _getBakery = getBakery;
         _saveCallback = saveCallback;
         _notifyCallback = notifyCallback;
+        _campaignService = campaignService;
     }
 
     public void StartCustomerTimer()
@@ -38,7 +41,7 @@ public class CustomerService
         {
             await HandleCustomerVisit();
             LastCustomerTime = DateTime.Now;
-            _currentCustomerInterval = TimeSpan.FromSeconds(_random.Next(30, 60)); // nowy losowy interwał
+            _currentCustomerInterval = TimeSpan.FromSeconds(_random.Next(30, 60));
         }
 
         var bakery = _getBakery();
@@ -59,7 +62,16 @@ public class CustomerService
     private async Task HandleCustomerVisit()
     {
         var bakery = _getBakery();
-        var possibleProducts = bakery.Products.Where(p => p.RequiredIngredients.Any()).ToList();
+
+        var unlockedProductNames = bakery.Recipes
+            .Where(r => r.IsUnlocked)
+            .Select(r => r.ProductName)
+            .ToHashSet();
+
+        var possibleProducts = bakery.Products
+            .Where(p => p.RequiredIngredients.Any() && unlockedProductNames.Contains(p.Name))
+            .ToList();
+
         if (!possibleProducts.Any()) return;
 
         var requested = new Dictionary<string, int>();
@@ -68,9 +80,9 @@ public class CustomerService
         {
             int quantity = product.Name switch
             {
-                "Ciasto" => _random.Next(0, 2),
+                "Ciasto" => _random.Next(0, 1),
                 "Bułka" => _random.Next(0, 9),
-                "Chleb" => _random.Next(0, 3),
+                "Chleb" => _random.Next(0, 4),
                 _ => 0
             };
 
@@ -108,12 +120,24 @@ public class CustomerService
         if (!canFulfill)
             return;
 
+        decimal earnedThisOrder = 0;
+
         foreach (var req in customer.RequestedProducts)
         {
             var prod = bakery.Products.First(p => p.Name == req.Key);
             prod.Quantity -= req.Value;
             prod.QuantitySold += req.Value;
-            bakery.Money += prod.SalePrice * req.Value;
+
+            decimal income = prod.SalePrice * req.Value;
+            bakery.Money += income;
+            earnedThisOrder += income;
+        }
+
+        bakery.TotalEarned += earnedThisOrder;
+
+        if (bakery.TotalEarned >= 200)
+        {
+            _campaignService.MarkObjectiveComplete("earn-200");
         }
 
         bakery.CustomersWaiting.Remove(customer);
@@ -123,9 +147,10 @@ public class CustomerService
         int exp = bakery.GetExpForCustomerOrder(customer);
         bakery.AddExperience(exp);
 
+        _campaignService.MarkObjectiveComplete("complete-order");
+
         _notifyCallback();
     }
-
 
     public void NotifyStateChanged() => _notifyCallback();
 }

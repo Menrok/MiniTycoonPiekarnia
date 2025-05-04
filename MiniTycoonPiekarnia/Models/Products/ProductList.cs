@@ -1,4 +1,4 @@
-﻿namespace MiniTycoonPiekarnia.Models;
+﻿namespace MiniTycoonPiekarnia.Models.Products;
 
 public static class ProductList
 {

@@ -6,7 +6,7 @@
 
     <div class="production-layout">
         <div class="production-left">
-            @foreach (var product in GameState.Bakery.Products)
+            @foreach (var product in GameState.Bakery.Products.Where(p => GameState.Bakery.Recipes.Any(r => r.ProductName == p.Name && r.IsUnlocked)))
             {
                 <div class="product-button" @onclick="() => TryStartProduction(product)">
                     <img src="images/products/@product.IconFile" alt="@product.Name" class="product-icon" />

@@ -1,9 +1,11 @@
-﻿using MiniTycoonPiekarnia.Models;
+﻿using MiniTycoonPiekarnia.Models.Bakery;
+using MiniTycoonPiekarnia.Models.Products;
 
 namespace MiniTycoonPiekarnia.Services;
 
 public class ProductionService
 {
+    private readonly CampaignService _campaignService;
     private readonly Func<Bakery> _getBakery;
     private readonly Func<Task> _saveCallback;
     private readonly Action _notifyCallback;
@@ -11,11 +13,12 @@ public class ProductionService
     private System.Timers.Timer? _productionTimer;
     private static readonly TimeSpan TimePerItem = TimeSpan.FromSeconds(15);
 
-    public ProductionService(Func<Bakery> getBakery, Func<Task> saveCallback, Action notifyCallback)
+    public ProductionService(Func<Bakery> getBakery, Func<Task> saveCallback, Action notifyCallback, CampaignService campaignService)
     {
         _getBakery = getBakery;
         _saveCallback = saveCallback;
         _notifyCallback = notifyCallback;
+        _campaignService = campaignService;
     }
 
     public void StartProductionLoop()
@@ -109,6 +112,12 @@ public class ProductionService
             if (task.CurrentProgress >= 1.0)
             {
                 product.Quantity += product.ProducedAmount;
+
+                if (task.ProductName == "Chleb")
+                {
+                    _campaignService.MarkObjectiveComplete("bake-bread");
+                }
+
                 task.QuantityRemaining--;
 
                 if (task.QuantityRemaining <= 0)

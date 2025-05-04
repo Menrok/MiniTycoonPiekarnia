@@ -1,4 +1,4 @@
-﻿namespace MiniTycoonPiekarnia.Models;
+﻿namespace MiniTycoonPiekarnia.Models.Bakery;
 
 public class Tile
 {

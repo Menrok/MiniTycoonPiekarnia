@@ -1,5 +1,8 @@
-﻿using MiniTycoonPiekarnia.Models;
-using Blazored.LocalStorage;
+﻿using Blazored.LocalStorage;
+using MiniTycoonPiekarnia.Models.Bakery;
+using MiniTycoonPiekarnia.Models.Ingredients;
+using MiniTycoonPiekarnia.Models.Products;
+using MiniTycoonPiekarnia.Models.Custromers;
 
 namespace MiniTycoonPiekarnia.Services;
 
@@ -13,6 +16,7 @@ public class GameStateService
     private readonly BuildingService _buildingService;
     private readonly EconomyService _economyService;
     private readonly IngredientService _ingredientService;
+    private readonly CampaignService _campaignService;
 
     private const string SaveKey = "BakeryGameSave";
 
@@ -22,12 +26,17 @@ public class GameStateService
     public GameStateService(ILocalStorageService localStorage)
     {
         _localStorage = localStorage;
+
+        _campaignService = new CampaignService(() => Bakery);
+
         _economyService = new EconomyService(() => Bakery, NotifyStateChanged);
-        _ingredientService = new IngredientService(() => Bakery, _economyService, NotifyStateChanged);
-        _productionService = new ProductionService(() => Bakery, SaveGameAsync, NotifyStateChanged);
-        _customerService = new CustomerService(() => Bakery, SaveGameAsync, NotifyStateChanged);
-        _buildingService = new BuildingService(() => Bakery, SaveGameAsync, NotifyStateChanged);
+        _ingredientService = new IngredientService(() => Bakery, _economyService, NotifyStateChanged, _campaignService);
+        _productionService = new ProductionService(() => Bakery, SaveGameAsync, NotifyStateChanged, _campaignService);
+        _customerService = new CustomerService(() => Bakery, SaveGameAsync, NotifyStateChanged, _campaignService);
+
+        _buildingService = new BuildingService(() => Bakery, SaveGameAsync, NotifyStateChanged, _campaignService);
     }
+
 
     public List<ProductionTask> ActiveProductions => Bakery.ActiveProductions;
     public ProductionService Production => _productionService;
@@ -35,6 +44,7 @@ public class GameStateService
     public BuildingService Building => _buildingService;
     public EconomyService Economy => _economyService;
     public IngredientService Ingredients => _ingredientService;
+    public CampaignService Campaign => _campaignService;
 
     public async Task SaveGameAsync() => await _localStorage.SetItemAsync(SaveKey, Bakery);
 
@@ -64,6 +74,7 @@ public class GameStateService
         Bakery.CustomersWaiting = new List<Customer>();
         Bakery.CustomersHistory = new List<Customer>();
         Bakery.ActiveProductions = new List<ProductionTask>();
+        Bakery.Recipes = RecipeList.GetInitialRecipes();
 
         for (int y = 0; y < Bakery.MapHeight; y++)
         {
@@ -72,6 +83,5 @@ public class GameStateService
                 Bakery.Tiles.Add(new Tile { X = x, Y = y });
             }
         }
-
     }
 }

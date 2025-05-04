@@ -1,10 +1,16 @@
-﻿namespace MiniTycoonPiekarnia.Models;
+﻿namespace MiniTycoonPiekarnia.Models.Products;
 
-public class Ingredient
+public class Product
 {
     public string Name { get; set; } = string.Empty;
-    public decimal Quantity { get; set; } = 0;
-    public decimal PurchasePrice { get; set; } = 0m;
+    public int Quantity { get; set; } = 0;
+    public int QuantitySold { get; set; }
+    public decimal SalePrice { get; set; }
+    public int ProducedAmount { get; set; }
+    public int ProductionTimeSeconds { get; set; }
+    public int ExpValue { get; set; }
+
+    public Dictionary<string, decimal> RequiredIngredients { get; set; } = new();
 
     public string IconFile => $"{Normalize(Name)}.png";
 
