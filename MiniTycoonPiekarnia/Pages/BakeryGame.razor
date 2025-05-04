@@ -1,77 +1,165 @@
 ﻿@page "/"
+@implements IDisposable
 
-<div class="bakery-map">
-    @foreach (var y in Enumerable.Range(0, GameState.Bakery.MapHeight))
+<div class="bakery-room"
+     @onclick="HandleMapClick"
+     @onmousemove="UpdateCursorPosition"
+     style="position: relative;
+            width:@(GameState.Bakery.BakeryWidthPx)px;
+            height:@(GameState.Bakery.BakeryHeightPx)px;">
+
+    @foreach (var building in GameState.Bakery.Buildings)
     {
-        <div class="row">
-            @foreach (var x in Enumerable.Range(0, GameState.Bakery.MapWidth))
+        var isSelected = GameState.SelectedBuildingId == building.Id;
+        var classes = "bakery-building" + (isSelected ? " selected" : "");
+
+        <img class="@classes"
+             src="@GetImage(building.Type)"
+             style="position: absolute;
+            left:@(building.X)px;
+            top:@(building.Y)px;
+            transform: rotate(@(building.Rotation)deg);
+            width: 80px;
+            height: 80px;"
+             @onclick:stopPropagation
+             @onclick="() => ToggleBuildingSelection(building.Id)" />
+
+
+        @if (isSelected)
         {
-            var tile = GameState.Bakery.Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
-            if (tile != null)
-            {
-                <TileComponent Tile="tile" OnTileClicked="HandleTileClick" />
-            }
+            <div class="building-controls"
+                 style="position: absolute; left:@(building.X + 85)px; top:@(building.Y)px;">
+                <button @onclick="() => Rotate(building.Id)">🔁</button>
+                <button @onclick="() => Move(building.Id)">📦</button>
+                <button @onclick="() => Sell(building.Id)">🗑️</button>
+            </div>
         }
-    </div>
-}
+    }
+
+
+    @if (GameState.ActivePlacement != null)
+    {
+        <img src="@GetImage(GameState.ActivePlacement.Type)"
+             class="ghost"
+             style="position: absolute;
+                    pointer-events: none;
+                    opacity: 0.5;
+                    left:@(cursorX - 40)px;
+                    top:@(cursorY - 40)px;
+                    transform: rotate(@(GameState.ActivePlacement.Rotation)deg);
+                    width: 80px;
+                    height: 80px;" />
+    }
 </div>
 
 @if (ModalService.IsBuildModalOpen)
 {
-    <BuildModal Tile="ModalService.SelectedTileForBuild" />
+    <BuildModal />
 }
 
 @if (ModalService.IsProductionModalOpen)
 {
     <ProductionModal />
 }
-
 @if (ModalService.IsWarehouseModalOpen)
 {
     <WarehouseModal />
 }
-
 @if (ModalService.IsShopModalOpen)
 {
     <ShopModal />
 }
-
 @if (ModalService.IsUpgradesModalOpen)
 {
     <UpgradesModal />
 }
-
 @if (ModalService.IsReportsModalOpen)
 {
     <ReportsModal />
 }
-
 @if (ModalService.IsCustomerModalOpen)
 {
     <CustomerModal />
 }
 
 @code {
+    private int cursorX;
+    private int cursorY;
+
     protected override async Task OnInitializedAsync()
     {
         ModalService.OnChange += StateHasChanged;
         await GameState.LoadGameAsync();
     }
 
-    private void HandleTileClick(Tile tile)
+    private void UpdateCursorPosition(MouseEventArgs e)
     {
-        if (tile.Building == null)
+        cursorX = (int)e.OffsetX;
+        cursorY = (int)e.OffsetY;
+    }
+
+    private async Task HandleMapClick(MouseEventArgs e)
+    {
+        if (GameState.SelectedBuildingId != null)
         {
-            ModalService.OpenBuildModal(tile);
+            GameState.DeselectBuilding();
+            StateHasChanged();
+            return;
         }
-        else
+
+        if (GameState.ActivePlacement != null)
         {
-            Console.WriteLine($"Kliknięto budynek: {tile.Building} ({tile.X}, {tile.Y})");
+            await GameState.ConfirmPlacement((float)e.OffsetX - 40, (float)e.OffsetY - 40);
         }
     }
 
-    public void Dispose()
+    private string GetImage(BuildingType type) =>
+        type switch
+        {
+            BuildingType.Oven => "images/building/piec.png",
+            BuildingType.Shelf => "images/building/polka.png",
+            BuildingType.Website => "images/building/witryna.png",
+            _ => "images/building/unknown.png"
+        };
+
+    public void Dispose() => ModalService.OnChange -= StateHasChanged;
+
+    private void Rotate(Guid id)
     {
-        ModalService.OnChange -= StateHasChanged;
+        GameState.Building.RotateBuilding(id, 90);
+    }
+
+    private void Move(Guid id)
+    {
+        var b = GameState.Bakery.Buildings.FirstOrDefault(x => x.Id == id);
+        if (b == null) return;
+
+        GameState.StartBuildingPlacement(new BuildingPlacement
+            {
+                Type = b.Type,
+                Cost = 0,
+                Rotation = b.Rotation
+            });
+
+        GameState.Building.RemoveBuilding(id);
+        GameState.DeselectBuilding();
+    }
+
+    private void Sell(Guid id)
+    {
+        GameState.Building.RemoveBuilding(id);
+        GameState.DeselectBuilding();
+    }
+
+    private void ToggleBuildingSelection(Guid id)
+    {
+        if (GameState.SelectedBuildingId == id)
+        {
+            GameState.DeselectBuilding();
+        }
+        else
+        {
+            GameState.SelectBuilding(id);
+        }
     }
 }

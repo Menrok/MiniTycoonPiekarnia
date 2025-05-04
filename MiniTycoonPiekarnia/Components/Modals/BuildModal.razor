@@ -3,37 +3,27 @@
 <div class="modal-overlay" @onclick="Close"></div>
 
 <div class="modal" @onclick:stopPropagation>
-    <h2>Buduj na polu (@Tile.X, @Tile.Y)</h2>
-
     <div class="building-options">
-        <div class="building-card" @onclick="() => TryBuild(BuildingType.Oven)">
+        <div class="building-card" @onclick="() => StartPlacement(BuildingType.Oven)">
             <img src="images/building/piec.png" alt="Piec" />
             <div class="label">Piec</div>
             <div class="price">200 zł</div>
         </div>
-        <div class="building-card" @onclick="() => TryBuild(BuildingType.Shelf)">
+        <div class="building-card" @onclick="() => StartPlacement(BuildingType.Shelf)">
             <img src="images/building/polka.png" alt="Półka" />
             <div class="label">Półka</div>
             <div class="price">100 zł</div>
         </div>
-        <div class="building-card" @onclick="() => TryBuild(BuildingType.Website)">
+        <div class="building-card" @onclick="() => StartPlacement(BuildingType.Website)">
             <img src="images/building/witryna.png" alt="Witryna chłodnicza" />
             <div class="label">Witryna chłodnicza</div>
             <div class="price">150 zł</div>
         </div>
     </div>
-    <div class="rotation-controls">
-        <button @onclick="RotateLeft">⟲ Obróć</button>
-        <span>@rotation°</span>
-    </div>
-
-<ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
+    <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />
 </div>
 
 @code {
-    [Parameter] public Tile Tile { get; set; } = null!;
-    [Parameter] public EventCallback OnClose { get; set; }
-
     private ErrorPopupController popup = new();
     private int rotation = 0;
 
@@ -42,18 +32,25 @@
 
     private void Close() => ModalService.CloseModal();
 
-    private async Task TryBuild(BuildingType type)
+    private void RotateLeft() => rotation = (rotation + 90) % 360;
+
+    private void StartPlacement(BuildingType type)
     {
         var cost = GetBuildingCost(type);
-        var success = GameState.Building.BuildBuilding(Tile.X, Tile.Y, type, cost, rotation);
 
-        if (!success)
+        if (GameState.Bakery.Money < cost)
         {
-            await popup.ShowError("Za mało pieniędzy lub budynek już istnieje.");
+            _ = popup.ShowError("Za mało pieniędzy.");
             return;
         }
 
-        await GameState.SaveGameAsync();
+        GameState.StartBuildingPlacement(new BuildingPlacement
+            {
+                Type = type,
+                Rotation = rotation,
+                Cost = cost
+            });
+
         ModalService.CloseModal();
     }
 
@@ -64,6 +61,4 @@
         BuildingType.Website => 150m,
         _ => 0m
     };
-
-    private void RotateLeft() => rotation = (rotation + 90) % 360;
 }

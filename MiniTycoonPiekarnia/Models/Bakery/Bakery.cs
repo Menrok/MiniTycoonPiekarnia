@@ -15,9 +15,10 @@ public class Bakery
 
     public int CustomerSatisfaction { get; set; } = 100;
 
-    public List<Tile> Tiles { get; set; } = new();
-    public int MapWidth { get; set; } = 3;
-    public int MapHeight { get; set; } = 3;
+    public List<PlacedBuilding> Buildings { get; set; } = new();
+    public int BakeryWidthPx { get; set; } = 300;
+    public int BakeryHeightPx { get; set; } = 300;
+
 
     public List<Ingredient> Ingredients { get; set; } = new();
     public List<Product> Products { get; set; } = new();
@@ -30,8 +31,8 @@ public class Bakery
 
     public CampaignProgress CampaignProgress { get; set; } = new();
 
-    public int MaxIngredientCapacity => 50 * Tiles.Count(t => t.Building == BuildingType.Shelf);
-    public int MaxProductCapacity => 50 * Tiles.Count(t => t.Building == BuildingType.Website);
+    public int MaxIngredientCapacity => 50 * Buildings.Count(b => b.Type == BuildingType.Shelf);
+    public int MaxProductCapacity => 50 * Buildings.Count(b => b.Type == BuildingType.Website);
     public decimal CurrentIngredientQuantity => Ingredients.Sum(i => i.Quantity);
     public int CurrentProductQuantity => Products.Sum(p => p.Quantity);
 

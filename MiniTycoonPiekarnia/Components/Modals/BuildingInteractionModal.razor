@@ -1,0 +1,18 @@
+﻿@foreach (var building in GameState.Bakery.Buildings)
+{
+    <img class="bakery-building"
+         src="@GetImage(building.Type)"
+         style="left:@(building.X)px; top:@(building.Y)px;"
+         @onclick="() => GameState.SelectBuilding(building.Id)" />
+}
+
+
+@code {
+    private string GetImage(BuildingType type) => type switch
+    {
+        BuildingType.Oven => "images/building/piec.png",
+        BuildingType.Shelf => "images/building/polka.png",
+        BuildingType.Website => "images/building/witryna.png",
+        _ => "images/building/unknown.png"
+    };
+}

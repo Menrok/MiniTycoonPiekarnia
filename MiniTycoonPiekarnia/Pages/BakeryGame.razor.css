@@ -1,4 +1,4 @@
-﻿.bakery-map {
+﻿.bakery-room {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,11 +8,31 @@
     border: 12px solid #deb887;
     border-radius: 16px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    width: max-content;
+}
+    .bakery-room img {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        transition: transform 0.2s ease;
+    }
 
+.ghost {
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 10;
 }
 
-.row {
-    display: flex;
-    flex-direction: row;
+.building-controls {
+    position: absolute;
+    background: white;
+    border: 1px solid #aaa;
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
 }
+
+    .building-controls button {
+        margin: 2px;
+        cursor: pointer;
+    }

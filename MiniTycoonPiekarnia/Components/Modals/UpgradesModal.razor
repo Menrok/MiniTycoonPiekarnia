@@ -8,7 +8,7 @@
         {
             <div class="expand-card" @onclick="ExpandRight">
                 <h3>Rozbuduj w prawo</h3>
-                Nowy rozmiar: @(CurrentWidth + 1) x @CurrentHeight
+                Nowa szerokość: @(CurrentWidth + 100) px
                 <div class="expand-cost">@CurrentCost zł</div>
             </div>
         }
@@ -16,7 +16,7 @@
         {
             <div class="expand-card disabled">
                 <h3>Rozbuduj w prawo</h3>
-                Nowy rozmiar: @(CurrentWidth + 1) x @CurrentHeight
+                Nowa szerokość: @(CurrentWidth + 100) px
                 <div class="expand-cost">@CurrentCost zł</div>
             </div>
         }
@@ -25,7 +25,7 @@
         {
             <div class="expand-card" @onclick="ExpandDown">
                 <h3>Rozbuduj w dół</h3>
-                Nowy rozmiar: @CurrentWidth x @(CurrentHeight + 1)
+                Nowa wysokość: @(CurrentHeight + 100) px
                 <div class="expand-cost">@CurrentCost zł</div>
             </div>
         }
@@ -33,7 +33,7 @@
         {
             <div class="expand-card disabled">
                 <h3>Rozbuduj w dół</h3>
-                Nowy rozmiar: @CurrentWidth x @(CurrentHeight + 1)
+                Nowa wysokość: @(CurrentHeight + 100) px
                 <div class="expand-cost">@CurrentCost zł</div>
             </div>
         }
@@ -41,11 +41,11 @@
 </div>
 
 @code {
-    private int CurrentWidth => GameState.Bakery.MapWidth;
-    private int CurrentHeight => GameState.Bakery.MapHeight;
-    private int MaxSize => 10;
+    private int CurrentWidth => GameState.Bakery.BakeryWidthPx;
+    private int CurrentHeight => GameState.Bakery.BakeryHeightPx;
+    private int MaxSize => 2000;
 
-    private int ExpansionLevel => (CurrentWidth + CurrentHeight) - 6;
+    private int ExpansionLevel => ((CurrentWidth + CurrentHeight) - 600) / 100;
     private int CurrentCost => (int)(500 * Math.Pow(2, ExpansionLevel));
     private bool CanAfford => GameState.Economy.CanAfford(CurrentCost);
 

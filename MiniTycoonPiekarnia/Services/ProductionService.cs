@@ -74,7 +74,7 @@ public class ProductionService
     private async Task HandleProductionTick()
     {
         var bakery = _getBakery();
-        var ovens = bakery.Tiles.Count(t => t.Building == BuildingType.Oven);
+        var ovens = bakery.Buildings.Count(t => t.Type == BuildingType.Oven);
         if (ovens == 0 || !bakery.ActiveProductions.Any()) return;
 
         var now = DateTime.Now;

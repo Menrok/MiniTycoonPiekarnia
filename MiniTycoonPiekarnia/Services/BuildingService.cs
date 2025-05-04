@@ -17,49 +17,45 @@ public class BuildingService
         _campaignService = campaignService;
     }
 
-
-    public bool BuildBuilding(int x, int y, BuildingType type, decimal cost, int rotation)
+    public bool PlaceBuilding(BuildingType type, decimal cost, float x, float y, int rotation)
     {
         var bakery = _getBakery();
 
         if (bakery.Money < cost) return false;
 
-        var tile = bakery.Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
-        if (tile == null || tile.Building != null) return false;
+        var overlapping = bakery.Buildings.Any(b =>
+            Math.Abs(b.X - x) < 80 && Math.Abs(b.Y - y) < 80);
+
+        if (overlapping) return false;
 
         bakery.Money -= cost;
-        tile.Building = type;
-        tile.Rotation = rotation;
-
-        switch (type)
+        bakery.Buildings.Add(new PlacedBuilding
         {
-            case BuildingType.Oven:
-                _campaignService.MarkObjectiveComplete("buy-oven");
-                break;
-            case BuildingType.Shelf:
-                _campaignService.MarkObjectiveComplete("buy-shelf");
-                break;
-            case BuildingType.Website:
-                _campaignService.MarkObjectiveComplete("buy-cooling");
-                break;
-        }
+            Type = type,
+            X = x,
+            Y = y,
+            Rotation = rotation
+        });
+
+        _campaignService.MarkObjectiveComplete((type switch
+        {
+            BuildingType.Oven => "buy-oven",
+            BuildingType.Shelf => "buy-shelf",
+            BuildingType.Website => "buy-cooling",
+            _ => null
+        })!);
 
         _notifyCallback();
         return true;
     }
 
-
     public async void ExpandBakeryRight(int cost)
     {
         var bakery = _getBakery();
-        if (bakery.Money < cost || bakery.MapWidth >= 10) return;
-
-        int newX = bakery.MapWidth;
-        for (int y = 0; y < bakery.MapHeight; y++)
-            bakery.Tiles.Add(new Tile { X = newX, Y = y });
+        if (bakery.Money < cost || bakery.BakeryWidthPx >= 2000) return;
 
         bakery.Money -= cost;
-        bakery.MapWidth++;
+        bakery.BakeryWidthPx += 100;
 
         _notifyCallback();
         await _saveCallback();
@@ -68,17 +64,51 @@ public class BuildingService
     public async void ExpandBakeryDown(int cost)
     {
         var bakery = _getBakery();
-        if (bakery.Money < cost || bakery.MapHeight >= 10) return;
-
-        int newY = bakery.MapHeight;
-        for (int x = 0; x < bakery.MapWidth; x++)
-            bakery.Tiles.Add(new Tile { X = x, Y = newY });
+        if (bakery.Money < cost || bakery.BakeryHeightPx >= 2000) return;
 
         bakery.Money -= cost;
-        bakery.MapHeight++;
+        bakery.BakeryHeightPx += 100;
 
         _notifyCallback();
         await _saveCallback();
+    }
+
+    public void RotateBuilding(Guid id, int degrees)
+    {
+        var bakery = _getBakery();
+        var building = bakery.Buildings.FirstOrDefault(b => b.Id == id);
+        if (building != null)
+        {
+            building.Rotation = (building.Rotation + degrees) % 360;
+            _notifyCallback();
+        }
+    }
+
+    public void RemoveBuilding(Guid id)
+    {
+        var bakery = _getBakery();
+        var building = bakery.Buildings.FirstOrDefault(b => b.Id == id);
+        if (building != null)
+        {
+            decimal refund = GetRefundAmount(building.Type);
+            bakery.Money += refund;
+            bakery.Buildings.Remove(building);
+
+            _notifyCallback();
+        }
+    }
+
+    private decimal GetRefundAmount(BuildingType type)
+    {
+        var baseCost = type switch
+        {
+            BuildingType.Oven => 200m,
+            BuildingType.Shelf => 100m,
+            BuildingType.Website => 150m,
+            _ => 0m
+        };
+
+        return baseCost * 0.5m;
     }
 
     public void NotifyStateChanged() => _notifyCallback();

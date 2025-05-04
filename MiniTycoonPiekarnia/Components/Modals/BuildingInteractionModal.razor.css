@@ -1,0 +1,18 @@
+﻿.bakery-building {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 5;
+}
+
+    .bakery-building:hover {
+        box-shadow: 0 0 8px #888;
+        z-index: 6;
+    }
+
+    .bakery-building.selected {
+        outline: 3px solid orange;
+        z-index: 10;
+    }

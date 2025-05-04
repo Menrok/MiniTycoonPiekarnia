@@ -37,7 +37,6 @@ public class GameStateService
         _buildingService = new BuildingService(() => Bakery, SaveGameAsync, NotifyStateChanged, _campaignService);
     }
 
-
     public List<ProductionTask> ActiveProductions => Bakery.ActiveProductions;
     public ProductionService Production => _productionService;
     public CustomerService Customer => _customerService;
@@ -68,7 +67,6 @@ public class GameStateService
 
     private void InitializeBakery()
     {
-        Bakery.Tiles = new List<Tile>();
         Bakery.Products = ProductList.GetInitialProducts();
         Bakery.Ingredients = IngredientList.GetInitialIngredients();
         Bakery.CustomersWaiting = new List<Customer>();
@@ -76,12 +74,96 @@ public class GameStateService
         Bakery.ActiveProductions = new List<ProductionTask>();
         Bakery.Recipes = RecipeList.GetInitialRecipes();
 
-        for (int y = 0; y < Bakery.MapHeight; y++)
+        Bakery.BakeryWidthPx = 300;
+        Bakery.BakeryHeightPx = 300;
+        Bakery.Buildings = new List<PlacedBuilding>();
+    }
+
+    public BuildingPlacement? ActivePlacement { get; private set; }
+
+    public void StartBuildingPlacement(BuildingPlacement placement)
+    {
+        ActivePlacement = placement;
+        NotifyStateChanged();
+    }
+
+    public void CancelPlacement()
+    {
+        ActivePlacement = null;
+        NotifyStateChanged();
+    }
+
+    public async Task ConfirmPlacement(float x, float y)
+    {
+        if (ActivePlacement == null) return;
+
+        var halfSize = 40;
+
+        if (x < 0 || y < 0 ||
+            x + halfSize > Bakery.BakeryWidthPx ||
+            y + halfSize > Bakery.BakeryHeightPx)
         {
-            for (int x = 0; x < Bakery.MapWidth; x++)
-            {
-                Bakery.Tiles.Add(new Tile { X = x, Y = y });
-            }
+            return;
         }
+
+        var success = Building.PlaceBuilding(
+            ActivePlacement.Type,
+            ActivePlacement.Cost,
+            x,
+            y,
+            ActivePlacement.Rotation);
+
+        if (success)
+        {
+            ActivePlacement = null;
+            await SaveGameAsync();
+        }
+
+        NotifyStateChanged();
+    }
+
+    public bool IsPlacementFrozen { get; private set; }
+    public float PlacementFrozenX { get; private set; }
+    public float PlacementFrozenY { get; private set; }
+    public void FreezePlacement(float x, float y)
+    {
+        PlacementFrozenX = x;
+        PlacementFrozenY = y;
+        IsPlacementFrozen = true;
+        NotifyStateChanged();
+    }
+
+    public async Task FinalizePlacement()
+    {
+        if (ActivePlacement == null) return;
+
+        var success = Building.PlaceBuilding(
+            ActivePlacement.Type,
+            ActivePlacement.Cost,
+            PlacementFrozenX,
+            PlacementFrozenY,
+            ActivePlacement.Rotation);
+
+        if (success)
+        {
+            ActivePlacement = null;
+            IsPlacementFrozen = false;
+            await SaveGameAsync();
+            NotifyStateChanged();
+        }
+    }
+
+    public Guid? SelectedBuildingId { get; private set; }
+
+    public void SelectBuilding(Guid id)
+    {
+        SelectedBuildingId = id;
+        NotifyStateChanged();
+    }
+
+    public void DeselectBuilding()
+    {
+        SelectedBuildingId = null;
+        NotifyStateChanged();
     }
 }

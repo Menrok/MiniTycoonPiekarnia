@@ -108,14 +108,14 @@
             return;
         }
 
-        if (!GameState.Bakery.Tiles.Any(t => t.Building == BuildingType.Oven))
+        if (!GameState.Bakery.Buildings.Any(t => t.Type == BuildingType.Oven))
         {
             await popup.ShowError("Zbuduj piec, aby rozpocząć produkcję.");
             StateHasChanged();
             return;
         }
 
-        if (!GameState.Bakery.Tiles.Any(t => t.Building == BuildingType.Website))
+        if (!GameState.Bakery.Buildings.Any(t => t.Type == BuildingType.Website))
         {
             await popup.ShowError("Zbuduj witrynę, aby przechowywać wypieki.");
             StateHasChanged();
