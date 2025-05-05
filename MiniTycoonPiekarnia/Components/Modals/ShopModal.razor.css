@@ -135,3 +135,41 @@
     color: white;
     font-weight: bold;
 }
+
+.recipe-item.locked {
+    opacity: 0.85;
+    border: 2px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #fff8e1;
+}
+
+.recipe-item.unlocked {
+    border: 2px solid #5cb85c;
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #e9fbe9;
+}
+
+.unlocked-label {
+    margin-top: 6px;
+    color: #3c763d;
+    font-weight: bold;
+}
+
+.buy-recipe-button {
+    background: linear-gradient(145deg, #ffdd57, #f7c948);
+    border: none;
+    color: #333;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+    .buy-recipe-button:hover {
+        background: linear-gradient(145deg, #ffe780, #f7c948);
+        transform: scale(1.05);
+    }

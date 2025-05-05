@@ -36,20 +36,26 @@
             }
         </div>
     }
-    else if (activeTab == ShopTab.Recipes)
+    @if (activeTab == ShopTab.Recipes)
     {
         <div class="shop-grid">
             @foreach (var recipe in GameState.Bakery.Recipes)
             {
-                <div class="shop-item">
-                    <strong>@recipe.ProductName</strong><br />
+                <div class="shop-item recipe-item @(recipe.IsUnlocked ? "unlocked" : "locked")">
+                    <div class="ingredient-box" title="@recipe.ProductName">
+                        <img src="images/products/@recipe.IconFile" alt="@recipe.ProductName" class="ingredient-icon" />
+                    </div>
+                    <strong>@recipe.ProductName</strong>
+
                     @if (recipe.IsUnlocked)
                     {
-                        <span class="unlocked-label">✅ Odblokowano</span>
+                        <span class="unlocked-label">Odblokowano</span>
                     }
                     else
                     {
-                        <button @onclick="() => UnlockRecipe(recipe)">🔓 Kup przepis (@recipe.UnlockCost zł)</button>
+                        <button class="buy-recipe-button" @onclick="() => UnlockRecipe(recipe)">
+                            Kup przepis<br /><strong>@recipe.UnlockCost zł</strong>
+                        </button>
                     }
                 </div>
             }
