@@ -1,3 +1,22 @@
+/* /Components/Modals/BuildingInteractionModal.razor.rz.scp.css */
+.bakery-building[b-0ozhvrhc4v] {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 5;
+}
+
+    .bakery-building:hover[b-0ozhvrhc4v] {
+        box-shadow: 0 0 8px #888;
+        z-index: 6;
+    }
+
+    .bakery-building.selected[b-0ozhvrhc4v] {
+        outline: 3px solid orange;
+        z-index: 10;
+    }
 /* /Components/Modals/BuildModal.razor.rz.scp.css */
 .modal-overlay[b-avmb6cc35v] {
     position: fixed;
@@ -15,12 +34,15 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
     z-index: 1001;
-    width: 500px;
-    height: 300px;
+    width: 600px;
+    height: 320px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     display: flex;
@@ -88,6 +110,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
@@ -170,6 +195,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
@@ -211,7 +239,7 @@ input[type="number"][b-yl8jfm4pga] {
 .production-right[b-yl8jfm4pga] {
     width: 55%;
     overflow-y: auto;
-    max-height: 80%;
+    height: 227px;
     padding-right: 8px;
 }
 
@@ -219,6 +247,11 @@ input[type="number"][b-yl8jfm4pga] {
     display: flex;
     align-items: center;
     gap: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 2px;
+    transition: background-color 0.2s ease;
+    width: 273px;
 }
 
 .product-button[b-yl8jfm4pga] {
@@ -321,6 +354,24 @@ input[type="number"][b-yl8jfm4pga] {
     font-size: 12px;
     font-weight: bold;
 }
+
+.production-controls[b-yl8jfm4pga] {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+    .production-controls button[b-yl8jfm4pga] {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 2px;
+    }
+
+        .production-controls button:hover[b-yl8jfm4pga] {
+            color: red;
+        }
 /* /Components/Modals/ReportsModal.razor.rz.scp.css */
 .modal-overlay[b-orpkkf1p0e] {
     position: fixed;
@@ -338,30 +389,81 @@ input[type="number"][b-yl8jfm4pga] {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
     z-index: 1001;
     width: 600px;
-    height: 400px;
-    text-align: center;
+    height: 320px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 12px;
+    gap: 18px;
     font-size: 0.95rem;
+}
+
+.report-section h3[b-orpkkf1p0e] {
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
 .report-list[b-orpkkf1p0e] {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
     .report-list li[b-orpkkf1p0e] {
-        margin: 8px 0;
-        font-size: 1rem;
+        margin: 6px 0;
+        font-size: 0.96rem;
     }
+
+.top-products[b-orpkkf1p0e] {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 8px;
+}
+
+    .top-products li[b-orpkkf1p0e] {
+        padding: 4px 0;
+        font-size: 0.95rem;
+    }
+
+.xp-bar-container[b-orpkkf1p0e] {
+    width: 100%;
+    height: 22px;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ccc;
+}
+
+.xp-bar-fill[b-orpkkf1p0e] {
+    height: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.xp-bar-text[b-orpkkf1p0e] {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    line-height: 22px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+}
 /* /Components/Modals/ShopModal.razor.rz.scp.css */
 .modal-overlay[b-1jm7brljzd] {
     position: fixed;
@@ -379,6 +481,9 @@ input[type="number"][b-yl8jfm4pga] {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
@@ -486,6 +591,58 @@ input[type="number"][b-yl8jfm4pga] {
         .buy-buttons button:hover[b-1jm7brljzd] {
             background-color: #ddd;
         }
+
+.shop-tabs button[b-1jm7brljzd] {
+    padding: 6px 16px;
+    margin: 4px;
+    border: none;
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.shop-tabs .active-tab[b-1jm7brljzd] {
+    background-color: #999;
+    color: white;
+    font-weight: bold;
+}
+
+.recipe-item.locked[b-1jm7brljzd] {
+    opacity: 0.85;
+    border: 2px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #fff8e1;
+}
+
+.recipe-item.unlocked[b-1jm7brljzd] {
+    border: 2px solid #5cb85c;
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #e9fbe9;
+}
+
+.unlocked-label[b-1jm7brljzd] {
+    margin-top: 6px;
+    color: #3c763d;
+    font-weight: bold;
+}
+
+.buy-recipe-button[b-1jm7brljzd] {
+    background: linear-gradient(145deg, #ffdd57, #f7c948);
+    border: none;
+    color: #333;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+    .buy-recipe-button:hover[b-1jm7brljzd] {
+        background: linear-gradient(145deg, #ffe780, #f7c948);
+        transform: scale(1.05);
+    }
 /* /Components/Modals/UpgradesModal.razor.rz.scp.css */
 .modal-overlay[b-3kn31c87yh] {
     position: fixed;
@@ -503,6 +660,9 @@ input[type="number"][b-yl8jfm4pga] {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
@@ -539,6 +699,44 @@ input[type="number"][b-yl8jfm4pga] {
 .new-tile[b-3kn31c87yh] {
     background-color: #d0f0d0;
 }
+
+.expand-card[b-3kn31c87yh] {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 5px;
+    width: 240px;
+    height: 100px;
+    background-color: #fafafa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+    .expand-card:hover[b-3kn31c87yh] {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        background-color: #f0f8ff;
+    }
+
+    .expand-card h3[b-3kn31c87yh] {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+.expand-cost[b-3kn31c87yh] {
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: #0a0;
+    font-size: 1.1rem;
+}
+
+.expand-card.disabled[b-3kn31c87yh] {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}
 /* /Components/Modals/WarehouseModal.razor.rz.scp.css */
 .modal-overlay[b-7tt6180m9u] {
     position: fixed;
@@ -556,6 +754,9 @@ input[type="number"][b-yl8jfm4pga] {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
@@ -662,28 +863,53 @@ input[type="number"][b-yl8jfm4pga] {
     font-weight: bold;
     color: #444;
 }
-/* /Components/TileComponent.razor.rz.scp.css */
-.tile[b-5czo7o8yov] {
-    width: 80px;
-    height: 80px;
-    background-color: #fff9ef;
-    box-shadow: inset 0 0 1px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 32px;
+/* /Layout/CampaignPanel.razor.rz.scp.css */
+.campaign-panel[b-iooh612gaq] {
+    position: absolute;
+    top: 100px;
+    left: 20px;
+    width: 320px;
+    background-color: #fff8e7;
+    border: 2px solid #d2b48c;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', sans-serif;
+    background-color: rgba(255, 248, 231, 0.7);
+    z-index: 1000;
 }
 
-    .tile:hover[b-5czo7o8yov] {
-        background-color: #ffe4c4;
-        transform: scale(1.05);
+    .campaign-panel ul[b-iooh612gaq] {
+        list-style-type: none;
+        padding-left: 0;
     }
 
-.building-icon[b-5czo7o8yov] {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
+    .campaign-panel li[b-iooh612gaq] {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+
+    .campaign-panel .checkmark[b-iooh612gaq] {
+        width: 24px;
+        display: inline-block;
+    }
+
+    .campaign-panel h4[b-iooh612gaq] {
+        margin-top: -8px;
+        font-weight: normal;
+        color: #555;
+        font-size: 1rem;
+    }
+
+.reward-info[b-iooh612gaq] {
+    margin-top: 12px;
+    font-weight: bold;
+    color: #2c7a2c;
+    background-color: rgba(200, 255, 200, 0.3);
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.95rem;
 }
 /* /Layout/HudTop.razor.rz.scp.css */
 .hud-container[b-xy9mxuo9c7] {
@@ -693,14 +919,18 @@ input[type="number"][b-yl8jfm4pga] {
     transform: translateX(-50%);
     width: 600px;
     height: 50px;
-    background-color: #fffcf2;
+    background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 10px;
     z-index: 1000;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -754,10 +984,14 @@ input[type="number"][b-yl8jfm4pga] {
     left: 50%;
     transform: translateX(-50%);
     width: 640px;
-    background-color: #fef6e4;
+    background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
     display: flex;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 8px 16px;
     border-top: 2px solid #ccc;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -785,24 +1019,43 @@ input[type="number"][b-yl8jfm4pga] {
         transform: scale(1.05);
     }
 /* /Pages/BakeryGame.razor.rz.scp.css */
-.bakery-map[b-1flz1eanip] {
+.bakery-room[b-1flz1eanip] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 30px;
     background-color: #f8ede3;
     padding: 4px 16px;
     border: 12px solid #deb887;
     border-radius: 16px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    width: max-content;
+}
+    .bakery-room img[b-1flz1eanip] {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        transition: transform 0.2s ease;
+    }
 
+.ghost[b-1flz1eanip] {
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 10;
 }
 
-.row[b-1flz1eanip] {
-    display: flex;
-    flex-direction: row;
+.building-controls[b-1flz1eanip] {
+    position: absolute;
+    background: white;
+    border: 1px solid #aaa;
+    padding: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
 }
+
+    .building-controls button[b-1flz1eanip] {
+        margin: 2px;
+        cursor: pointer;
+    }
 /* /Shared/ErrorPopup.razor.rz.scp.css */
 .error-popup[b-h57wrc1lji] {
     position: fixed;
