@@ -7,17 +7,17 @@
         <div class="building-card" @onclick="() => StartPlacement(BuildingType.Oven)">
             <img src="images/building/piec.png" alt="Piec" />
             <div class="label">Piec</div>
-            <div class="price">200 zł</div>
+            <div class="price">@MoneyLabelHelper.Format(200)</div>
         </div>
         <div class="building-card" @onclick="() => StartPlacement(BuildingType.Shelf)">
             <img src="images/building/polka.png" alt="Półka" />
             <div class="label">Półka</div>
-            <div class="price">100 zł</div>
+            <div class="price">@MoneyLabelHelper.Format(100)</div>
         </div>
         <div class="building-card" @onclick="() => StartPlacement(BuildingType.DisplayShelf)">
             <img src="images/building/witryna.png" alt="Witryna chłodnicza" />
             <div class="label">Witryna chłodnicza</div>
-            <div class="price">150 zł</div>
+            <div class="price">@MoneyLabelHelper.Format(150)</div>
         </div>
     </div>
     <ErrorPopup Message="@popup.Message" Visible="@popup.Visible" FadeOut="@popup.FadeOut" />

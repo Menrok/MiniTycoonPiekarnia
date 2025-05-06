@@ -2,7 +2,7 @@
     <div class="hud-item">
         <img src="images/hub/pieniadze.png" alt="Pieniądze" class="hud-icon-img" />
         <span class="hud-label">Pieniądze:</span>
-        <span class="hud-value">@GameState.Bakery.Money.ToString("0.00") zł</span>
+        <span class="hud-value">@MoneyLabelHelper.Format(GameState.Bakery.Money)</span>
     </div>
     <div class="hud-item">
         <img src="images/hub/poziom.png" alt="Poziom" class="hud-icon-img" />

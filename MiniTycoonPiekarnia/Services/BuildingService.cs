@@ -23,8 +23,12 @@ public class BuildingService
 
         if (bakery.Money < cost) return false;
 
+        const int buildingSize = 80;
+        if (x < 0 || y < 0 || x + buildingSize > bakery.BakeryWidthPx || y + buildingSize > bakery.BakeryHeightPx)
+            return false;
+
         var overlapping = bakery.Buildings.Any(b =>
-            Math.Abs(b.X - x) < 80 && Math.Abs(b.Y - y) < 80);
+            Math.Abs(b.X - x) < buildingSize && Math.Abs(b.Y - y) < buildingSize);
 
         if (overlapping) return false;
 
@@ -84,16 +88,19 @@ public class BuildingService
         }
     }
 
-    public void RemoveBuilding(Guid id)
+    public void RemoveBuilding(Guid id, bool refund = true)
     {
         var bakery = _getBakery();
         var building = bakery.Buildings.FirstOrDefault(b => b.Id == id);
         if (building != null)
         {
-            decimal refund = GetRefundAmount(building.Type);
-            bakery.Money += refund;
-            bakery.Buildings.Remove(building);
+            if (refund)
+            {
+                decimal refundAmount = GetRefundAmount(building.Type);
+                bakery.Money += refundAmount;
+            }
 
+            bakery.Buildings.Remove(building);
             _notifyCallback();
         }
     }

@@ -14,12 +14,15 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
     border: 2px solid #ccc;
     border-radius: 12px;
     padding: 20px;
     z-index: 1001;
-    width: 500px;
-    height: 300px;
+    width: 600px;
+    height: 320px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     display: flex;

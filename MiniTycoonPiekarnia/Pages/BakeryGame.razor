@@ -141,7 +141,7 @@
                 Rotation = b.Rotation
             });
 
-        GameState.Building.RemoveBuilding(id);
+        GameState.Building.RemoveBuilding(id, refund: false);
         GameState.DeselectBuilding();
     }
 

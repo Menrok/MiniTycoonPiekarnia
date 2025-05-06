@@ -26,7 +26,7 @@
             <div class="reward-info">
                 @if (step.Reward.Money > 0)
                 {
-                    <div>🎁 Nagroda: @step.Reward.Money zł</div>
+                    <div>🎁 Nagroda: @MoneyLabelHelper.Format(step.Reward.Money)</div>
                 }
                 @if (step.Reward.Experience > 0)
                 {
@@ -46,7 +46,8 @@
         if (obj.Id == "earn-200")
         {
             var earned = GameState.Bakery.TotalEarned;
-            return $"{obj.Description} ({Math.Min((int)earned, 200)} / 200)";
+            var progress = Math.Min((int)earned, 200);
+            return $"{obj.Description} ({MoneyLabelHelper.Format(progress)} / 200 peksów)";
         }
 
         return obj.Description;

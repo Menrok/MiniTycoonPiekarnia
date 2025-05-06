@@ -44,10 +44,10 @@ public static class CampaignStepList
 {
             Title = "Nowy początek",
             Subtitle = "Zarobki",
-            Description = "Realizuj zamówienia i zarób 200 zł, by móc dalej inwestować.",
+            Description = "Realizuj zamówienia i zarób 200 Paksów, by móc dalej inwestować.",
             Objectives = new List<CampaignObjective>
             {
-                new() { Id = "earn-200", Description = "Zarób łącznie 200 zł" }
+                new() { Id = "earn-200", Description = "Zarób łącznie 200 Paksów" }
             },
             Reward = new CampaignReward { Experience = 30 }
         }

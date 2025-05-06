@@ -28,9 +28,9 @@
                         <div class="ingredient-qty">@currentQty</div>
                     </div>
                     <div class="buy-buttons">
-                        <button @onclick="() => Buy(item, 1)">Kup 1 (@(item.Price * 1) zł)</button>
-                        <button @onclick="() => Buy(item, 5)">Kup 5 (@(item.Price * 5) zł)</button>
-                        <button @onclick="() => Buy(item, 10)">Kup 10 (@(item.Price * 10) zł)</button>
+                        <button @onclick="() => Buy(item, 1)">Kup 1 (@(item.Price * 1) P)</button>
+                        <button @onclick="() => Buy(item, 5)">Kup 5 (@(item.Price * 5) P)</button>
+                        <button @onclick="() => Buy(item, 10)">Kup 10 (@(item.Price * 10) P)</button>
                     </div>
                 </div>
             }
@@ -54,7 +54,7 @@
                     else
                     {
                         <button class="buy-recipe-button" @onclick="() => UnlockRecipe(recipe)">
-                            Kup przepis<br /><strong>@recipe.UnlockCost zł</strong>
+                            Kup przepis<br /><strong>@MoneyLabelHelper.Format(recipe.UnlockCost)</strong>
                         </button>
                     }
                 </div>

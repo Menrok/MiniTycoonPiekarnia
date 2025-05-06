@@ -5,7 +5,11 @@
     transform: translateX(-50%);
     width: 600px;
     height: 50px;
-    background-color: #fffcf2;
+    background-color: #fff;
+    background-image: url('/images/tlomodal.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);

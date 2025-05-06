@@ -4,37 +4,27 @@
 
 <div class="modal">
     <div class="expand-options">
-        @if (CanExpandRight)
+        @if (ReachedMaxSize)
         {
-            <div class="expand-card" @onclick="ExpandRight">
-                <h3>Rozbuduj w prawo</h3>
-                Nowa szerokość: @(CurrentWidth + 100) px
-                <div class="expand-cost">@CurrentCost zł</div>
+            <div class="expand-card disabled">
+                <h3>Rozbuduj piekarnię</h3>
+                Osiągnięto maksymalny rozmiar piekarni.
+                <div class="expand-cost">@MoneyLabelHelper.Format(CurrentCost)</div>
+            </div>
+        }
+        else if (!CanAfford)
+        {
+            <div class="expand-card disabled">
+                <h3>Rozbuduj piekarnię</h3>
+                Brak wystarczających środków.
+                <div class="expand-cost">@MoneyLabelHelper.Format(CurrentCost)</div>
             </div>
         }
         else
         {
-            <div class="expand-card disabled">
-                <h3>Rozbuduj w prawo</h3>
-                Nowa szerokość: @(CurrentWidth + 100) px
-                <div class="expand-cost">@CurrentCost zł</div>
-            </div>
-        }
-
-        @if (CanExpandDown)
-        {
-            <div class="expand-card" @onclick="ExpandDown">
-                <h3>Rozbuduj w dół</h3>
-                Nowa wysokość: @(CurrentHeight + 100) px
-                <div class="expand-cost">@CurrentCost zł</div>
-            </div>
-        }
-        else
-        {
-            <div class="expand-card disabled">
-                <h3>Rozbuduj w dół</h3>
-                Nowa wysokość: @(CurrentHeight + 100) px
-                <div class="expand-cost">@CurrentCost zł</div>
+            <div class="expand-card" @onclick="ExpandBakery">
+                <h3>Rozbuduj piekarnię</h3>
+                <div class="expand-cost">@MoneyLabelHelper.Format(CurrentCost)</div>
             </div>
         }
     </div>
@@ -45,24 +35,20 @@
     private int CurrentHeight => GameState.Bakery.BakeryHeightPx;
     private int MaxSize => 2000;
 
-    private int ExpansionLevel => ((CurrentWidth + CurrentHeight) - 600) / 100;
+    private int ExpansionLevel => ((CurrentWidth + CurrentHeight) - 600) / 200;
     private int CurrentCost => (int)(500 * Math.Pow(2, ExpansionLevel));
     private bool CanAfford => GameState.Economy.CanAfford(CurrentCost);
 
-    private bool CanExpandRight => CurrentWidth < MaxSize && CanAfford;
-    private bool CanExpandDown => CurrentHeight < MaxSize && CanAfford;
+    private bool ReachedMaxSize => CurrentWidth >= MaxSize || CurrentHeight >= MaxSize;
 
-    private void ExpandRight()
-    {
-        if (!CanExpandRight) return;
-        GameState.Building.ExpandBakeryRight(CurrentCost);
-        Close();
-    }
+    private bool CanExpandBakery => !ReachedMaxSize && CanAfford;
 
-    private void ExpandDown()
+    private void ExpandBakery()
     {
-        if (!CanExpandDown) return;
-        GameState.Building.ExpandBakeryDown(CurrentCost);
+        if (!CanExpandBakery) return;
+
+        GameState.Building.ExpandBakeryRight(CurrentCost / 2);
+        GameState.Building.ExpandBakeryDown(CurrentCost / 2);
         Close();
     }
 
